@@ -7,7 +7,7 @@ const Produk = require('../models/produk');
 router.get('/', (req, res, next) => {
     Order.find()
         .select('_id produk quantity')
-        .populate('produk','nama')
+        .populate('produk', 'nama')
         .exec()
         .then(doc => {
             res.status(200).json({
@@ -71,7 +71,10 @@ router.delete('/:orderId', (req, res, next) => {
             })
         })
         .catch(err => {
-
+            res.status(500).json({
+                status: 500,
+                message: err
+            })
         })
 
 })

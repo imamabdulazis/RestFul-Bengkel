@@ -2,16 +2,18 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Servis = require('../models/servis');
+const Produk = require('../models/produk');
 
 router.get('/', (req, res, next) => {
     Servis.find()
         .select('_id jumlah_produk jenis_servis total_bayar keterangan')
+        .populate('produk', 'nama')
         .exec()
         .then(doc => {
             res.status(200).json({
                 status: 200,
                 message: 'Berhasil retrieve data servis',
-                jumlah:doc.length,
+                jumlah: doc.length,
                 data: doc
             });
         })
@@ -24,16 +26,24 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-    const servis = new Servis({
-        _id: mongoose.Types.ObjectId(),
-        produk: req.body.produkId,
-        jumlah_produk: req.body.jumlah_produk,
-        jenis_servis: req.body.jenis_servis,
-        total_bayar: req.body.total_bayar,
-        keterangan: req.body.keterangan,
-    })
-    servis
-        .save()
+    Produk.findById(req.body.produkId)
+        .then(produk => {
+            if (!produk) {
+                res.status(404).json({
+                    status: 404,
+                    message: "Produk tidak ditemukan"
+                })
+            }
+            const servis = new Servis({
+                _id: mongoose.Types.ObjectId(),
+                produk: req.body.produkId,
+                jumlah_produk: req.body.jumlah_produk,
+                jenis_servis: req.body.jenis_servis,
+                total_bayar: req.body.total_bayar,
+                keterangan: req.body.keterangan,
+            })
+            return servis.save()
+        })
         .then(result => {
             console.log(result);
             res.status(200).json({
@@ -46,27 +56,51 @@ router.post('/', (req, res, next) => {
             console.log(err);
             res.status(500).json({ status: 500, message: err });
         })
-
-
-
 })
 
-router.put('/:servisId', (req, res, next) => {
+router.patch('/:servisId', (req, res, next) => {
     const id = req.params.servisId;
+    const updateOps = {}
 
-    res.status(200).json({ update: id });
+    for (const ops of req.body) {
+        updateOps[ops.propName] = ops.value;
+    }
+
+    Servis.update({ _id: id }, { $set: updateOps })
+        .exec()
+        .then(doc => {
+            res.status(200).json({
+                status: 200,
+                message: `Berhasil update data servis`,
+                data: doc,
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ status: 500, message: err });
+        })
 })
 
 router.delete('/:servisId', (req, res, next) => {
-   
-    
+    Servis.remove({ _id: req.params.servisId })
+        .exec()
+        .then(result => {
+            if (!result) {
+                res.status(404).json({
+                    status: 404,
+                    message: "Data tida ditemukan"
+                })
+            }
+            res.status(200).json({
+                status: 200,
+                message: "Servis Berhasil di hapus"
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                status: 500,
+                message: err
+            })
+        })
 })
-
-router.get('/:servisId', (req, res, next) => {
-    const id = req.params.servisId;
-
-    res.status(200).json({ dataOne: id });
-})
-
 
 module.exports = router;
