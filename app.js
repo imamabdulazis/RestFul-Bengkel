@@ -22,6 +22,8 @@ app.use((req, res, next) => {
     next();
 })
 
+const userRoutes = require('./api/routes/user');
+
 const produkRoutes = require("./api/routes/produk");
 const servisRoutes = require("./api/routes/servis");
 const orderRoutes = require("./api/routes/order");
@@ -30,6 +32,7 @@ app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
 
 
+app.use('/user', userRoutes);
 app.use("/produk", produkRoutes);
 app.use("/servis", servisRoutes);
 app.use("/order", orderRoutes);
