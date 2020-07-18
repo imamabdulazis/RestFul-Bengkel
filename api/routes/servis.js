@@ -6,7 +6,7 @@ const Produk = require('../models/produk');
 
 router.get('/', (req, res, next) => {
     Servis.find()
-        .select('_id jumlah_produk jenis_servis total_bayar keterangan')
+        .select('_id created_at jumlah_produk jenis_servis total_bayar keterangan')
         .populate('produk', 'nama')
         .exec()
         .then(doc => {
@@ -36,6 +36,7 @@ router.post('/', (req, res, next) => {
             }
             const servis = new Servis({
                 _id: mongoose.Types.ObjectId(),
+                created_at: new Date().toISOString(),
                 produk: req.body.produkId,
                 jumlah_produk: req.body.jumlah_produk,
                 jenis_servis: req.body.jenis_servis,
@@ -45,7 +46,6 @@ router.post('/', (req, res, next) => {
             return servis.save()
         })
         .then(result => {
-            console.log(result);
             res.status(200).json({
                 status: 200,
                 message: "Berhasil menambah servis",
