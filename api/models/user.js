@@ -14,16 +14,17 @@ const pointSchema = new mongoose.Schema({
 
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    // nama: { type: String, required: true },
+    image_url: { type: String, required: true },
+    nama: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    // nomor_telp: { type: String, required: true },
-    // alamat: { type: String, required: true },
-    // password: { type: String, required: true },
-    // location: {
-    //     type: pointSchema,
-    //     required: true
-    // }
+    nomor_telp: { type: String, required: true },
+    alamat: { type: String, required: true },
+    password: { type: String, required: true },
+    location: {
+        type: pointSchema,
+        required: true
+    }
 })
 
 module.exports = mongoose.model('User', userSchema);

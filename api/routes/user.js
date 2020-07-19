@@ -3,11 +3,37 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
+const _ = require('lodash');
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, new Date().toISOString() + file.originalname);
+    }
+})
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+}
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+});
 
 const User = require('../models/user');
 const app = require('../../app');
 
-router.post('/signup', (req, res, next) => {
+router.post('/signup', upload.single('userImage'), (req, res, next) => {
     User.find({ email: req.body.email })
         .exec()
         .then(user => {
@@ -26,9 +52,22 @@ router.post('/signup', (req, res, next) => {
                     } else {
                         const user = new User({
                             _id: mongoose.Types.ObjectId(),
+                            image_url: _.isEmpty(req.file) ? "http://localhost:3000/uploads/user.jpg" : "http://localhost:3000/" + req.file.path,
+                            nama: req.body.nama,
                             email: req.body.email,
+                            nomor_telp: req.body.nomor_telp,
+                            alamat: req.body.alamat,
                             password: hash,
+                            location: {
+                                type: "Point",
+                                coordinates: [
+                                    parseFloat(req.body.latitude),
+                                    parseFloat(req.body.longitude),
+                                ]
+                            }
                         });
+                        console.log(req.body.latitude)
+                        console.log(req.body.longitude)
                         user
                             .save()
                             .then(result => {
@@ -98,7 +137,7 @@ router.post('/login', (req, res) => {
 
 router.get('/', (req, res) => {
     User.find()
-        .select('_id email password')
+        .select('_id image_url nama email nomor_telp alamat location')
         .exec()
         .then(doc => {
             res.status(200).json({
@@ -116,12 +155,20 @@ router.get('/', (req, res) => {
 
 router.get('/:userId', (req, res) => {
     User.findById(req.params.userId)
-        .select('_id email password')
+        .select('_id image_url nama email nomor_telp alamat location')
         .exec()
         .then(doc => {
             res.status(200).json({
                 status: 200,
-                data: doc
+                data: {
+                    _id: doc._id,
+                    image_url: doc.image_url,
+                    nama: doc.nama,
+                    email: doc.email,
+                    nomor_telp: doc.nomor_telp,
+                    alamat: doc.alamat,
+                    location: doc.location
+                }
             })
         }).catch(err => {
             res.status(500).json({
