@@ -95,7 +95,7 @@ router.patch('/:produkId', checkAuth, (req, res, next) => {
         .then(doc => {
             res.status(200).json({
                 status: 200,
-                message: `Berhasil update produk ${req.body.nama}`,
+                message: `Berhasil update produk`,
                 data: doc,
             });
         })
