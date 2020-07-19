@@ -4,6 +4,7 @@ const produkSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     created_at: { type: Date },
     updated_at: { type: Date },
+    bengkel: { type: mongoose.Schema.Types.ObjectId, ref: 'Bengkel', require: true },
     kategori: { type: mongoose.Schema.Types.ObjectId, ref: 'Kategori', require: true },
     image_url: { type: String, required: true },
     nama: String,

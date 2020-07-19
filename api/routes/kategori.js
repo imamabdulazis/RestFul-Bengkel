@@ -6,7 +6,8 @@ const checkAuth = require('../middleware/check-auth');
 
 router.get('/', checkAuth, (req, res, next) => {
     Kategori.find()
-        .select('_id nama_kategori')
+        .select('_id nama_kategori bengkel')
+        .populate('bengkel', 'nama_bengkel')
         .exec()
         .then(doc => {
             res.status(200).json({
@@ -36,6 +37,7 @@ router.post('/', checkAuth, (req, res, next) => {
             const kategori = new Kategori({
                 _id: mongoose.Types.ObjectId(),
                 nama_kategori: req.body.nama_kategori,
+                bengkel: req.body.bengkelId,
             })
             return kategori.save()
         })
@@ -101,7 +103,8 @@ router.delete('/:kategoriId', checkAuth, (req, res, next) => {
 
 router.get('/:kategoriId', checkAuth, (req, res, next) => {
     Kategori.findById(req.params.kategoriId)
-        .select('Kategori nama_kategori _id')
+        .select('_id nama_kategori bengkel')
+        .populate('bengkel', 'nama_bengkel')
         .exec()
         .then(doc => {
             res.status(200).json({

@@ -30,6 +30,9 @@ const produkRoutes = require("./api/routes/produk");
 const servisRoutes = require("./api/routes/servis");
 const orderRoutes = require("./api/routes/order");
 
+// by id
+const produkBengkelRoutes = require('./api/routes/produkBengkel');
+
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
 
@@ -41,6 +44,12 @@ app.use('/kategori', kategoriRoutes);
 app.use("/produk", produkRoutes);
 app.use("/servis", servisRoutes);
 app.use("/order", orderRoutes);
+
+
+// by id
+app.use('/bengkel/produk', produkBengkelRoutes);
+
+
 
 app.use((req, res, next) => {
     const error = new Error("Tidak Ditemukan");

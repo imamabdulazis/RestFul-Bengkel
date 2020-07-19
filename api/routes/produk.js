@@ -30,7 +30,8 @@ const upload = multer({
 
 router.get('/', checkAuth, (req, res, next) => {
     Produk.find()
-        .select('nama harga stok kategori image_url _id')
+        .select('nama harga stok bengkel kategori image_url _id')
+        .populate('bengkel', 'nama_bengkel')
         .populate('kategori', 'nama_kategori')
         .exec()
         .then(doc => {
@@ -60,8 +61,9 @@ router.post('/', upload.single('produkImage'), checkAuth, (req, res, next) => {
             const produk = new Produk({
                 _id: new mongoose.Types.ObjectId(),
                 created_at: new Date().toISOString(),
+                bengkel: req.body.bengkelId,
                 kategori: req.body.kategoriId,
-                image_url: req.file.path,
+                image_url: "http://localhost:3000/" + req.file.path,
                 nama: req.body.nama,
                 harga: req.body.harga,
                 stok: req.body.stok,
