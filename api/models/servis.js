@@ -4,10 +4,11 @@ const servisSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     created_at: { type: Date },
     updated_at: { type: Date },
+    bengkel: { type: mongoose.Schema.Types.ObjectId, ref: 'Bengkel', require: true },
     produk: { type: mongoose.Schema.Types.ObjectId, ref: 'Produk', require: true },
     jumlah_produk: { type: Number, default: 1 },
     jenis_servis: String,
-    total_bayar: Number,
+    biaya_servis: Number,
     keterangan: String,
 
 })

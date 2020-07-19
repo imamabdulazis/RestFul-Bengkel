@@ -111,7 +111,7 @@ router.post('/login', (req, res) => {
                         userId: bengkel[0]._id,
                     }, process.env.JWT_KEY,
                         {
-                            expiresIn: '2 days'
+                            expiresIn: '3 days'
                         }
                     );
                     return res.status(200).json({

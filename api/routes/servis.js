@@ -37,10 +37,11 @@ router.post('/', (req, res, next) => {
             const servis = new Servis({
                 _id: mongoose.Types.ObjectId(),
                 created_at: new Date().toISOString(),
+                bengkel: req.body.bengkelId,
                 produk: req.body.produkId,
                 jumlah_produk: req.body.jumlah_produk,
                 jenis_servis: req.body.jenis_servis,
-                total_bayar: req.body.total_bayar,
+                biaya_servis: req.body.biaya_servis,
                 keterangan: req.body.keterangan,
             })
             return servis.save()

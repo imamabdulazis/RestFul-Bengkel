@@ -31,7 +31,9 @@ const servisRoutes = require("./api/routes/servis");
 const orderRoutes = require("./api/routes/order");
 
 // by id
-const produkBengkelRoutes = require('./api/routes/produkBengkel');
+const kategoriBengkelRoutes = require('./api/routes/_kategoriBengkel');
+const produkBengkelRoutes = require('./api/routes/_produkBengkel');
+const servisBengkelRoutes = require('./api/routes/_servisBengkel');
 
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
@@ -47,7 +49,9 @@ app.use("/order", orderRoutes);
 
 
 // by id
+app.use('/bengkel/kategori', kategoriBengkelRoutes);
 app.use('/bengkel/produk', produkBengkelRoutes);
+app.use('/bengkel/servis', servisBengkelRoutes);
 
 
 
