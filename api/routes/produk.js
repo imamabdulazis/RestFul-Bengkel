@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const Kategori = require('../models/kategori');
 const Produk = require('../models/produk');
 const multer = require('multer');
-
 const checkAuth = require('../middleware/check-auth');
-
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './uploads/');
@@ -14,7 +13,6 @@ const storage = multer.diskStorage({
         cb(null, new Date().toISOString() + file.originalname);
     }
 })
-
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
         cb(null, true);
@@ -22,7 +20,6 @@ const fileFilter = (req, file, cb) => {
         cb(null, false);
     }
 }
-
 const upload = multer({
     storage: storage,
     limits: {
@@ -34,22 +31,14 @@ const upload = multer({
 router.get('/', checkAuth, (req, res, next) => {
     Produk.find()
         .select('nama harga stok kategori image_url _id')
+        .populate('kategori', 'nama_kategori')
         .exec()
         .then(doc => {
             const response = {
                 status: 200,
                 message: "Berhasil",
                 jumlah: doc.length,
-                produk: doc.map(doc => {
-                    return {
-                        _id: doc._id,
-                        image_url: 'http://localhost:3000/' + doc.image_url,
-                        nama: doc.nama,
-                        harga: doc.harga,
-                        stok: doc.stok,
-                        kategori: doc.kategori,
-                    }
-                })
+                data: doc,
             }
             res.status(200).json(response)
 
@@ -60,30 +49,37 @@ router.get('/', checkAuth, (req, res, next) => {
 })
 
 router.post('/', upload.single('produkImage'), checkAuth, (req, res, next) => {
-    const produk = new Produk({
-        _id: new mongoose.Types.ObjectId(),
-        image_url: req.file.path,
-        nama: req.body.nama,
-        harga: req.body.harga,
-        stok: req.body.stok,
-        kategori: req.body.kategori
-    });
-    produk
-        .save()
+    Kategori.findById(req.body.kategoriId)
+        .then(kategori => {
+            if (!kategori) {
+                res.status(404).json({
+                    status: 404,
+                    message: "Kategori tidak ditemukan"
+                })
+            }
+            const produk = new Produk({
+                _id: new mongoose.Types.ObjectId(),
+                created_at: new Date().toISOString(),
+                kategori: req.body.kategoriId,
+                image_url: req.file.path,
+                nama: req.body.nama,
+                harga: req.body.harga,
+                stok: req.body.stok,
+                status: req.body.status
+            })
+            return produk.save()
+        })
         .then(result => {
             res.status(200).json({
                 status: 200,
-                message: `Berhasil menambahkan produk ${produk.nama}`,
+                message: `Berhasil menambahkan produk`,
                 data: result,
             });
         })
         .catch(err => {
             console.log(err);
             res.status(500).json({ status: 500, message: err });
-        });
-
-
-
+        })
 })
 
 router.patch('/:produkId', checkAuth, (req, res, next) => {
@@ -108,7 +104,7 @@ router.patch('/:produkId', checkAuth, (req, res, next) => {
         })
 })
 
-router.delete('/:produkId',checkAuth, (req, res, next) => {
+router.delete('/:produkId', checkAuth, (req, res, next) => {
     const id = req.params.produkId;
 
     Produk.remove({ _id: id })
@@ -124,7 +120,7 @@ router.delete('/:produkId',checkAuth, (req, res, next) => {
         })
 })
 
-router.get('/:produkId',checkAuth, (req, res, next) => {
+router.get('/:produkId', checkAuth, (req, res, next) => {
     const id = req.params.produkId;
 
     Produk.findById(id)
