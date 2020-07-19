@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const Produk = require('../models/produk');
 const multer = require('multer');
 
+const checkAuth = require('../middleware/check-auth');
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './uploads/');
@@ -29,7 +31,7 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth, (req, res, next) => {
     Produk.find()
         .select('nama harga stok kategori image_url _id')
         .exec()
@@ -57,7 +59,7 @@ router.get('/', (req, res, next) => {
         })
 })
 
-router.post('/', upload.single('produkImage'), (req, res, next) => {
+router.post('/', upload.single('produkImage'), checkAuth, (req, res, next) => {
     const produk = new Produk({
         _id: new mongoose.Types.ObjectId(),
         image_url: req.file.path,
@@ -84,7 +86,7 @@ router.post('/', upload.single('produkImage'), (req, res, next) => {
 
 })
 
-router.patch('/:produkId', (req, res, next) => {
+router.patch('/:produkId', checkAuth, (req, res, next) => {
     const id = req.params.produkId;
     const updateOps = {}
 
@@ -106,7 +108,7 @@ router.patch('/:produkId', (req, res, next) => {
         })
 })
 
-router.delete('/:produkId', (req, res, next) => {
+router.delete('/:produkId',checkAuth, (req, res, next) => {
     const id = req.params.produkId;
 
     Produk.remove({ _id: id })
@@ -122,7 +124,7 @@ router.delete('/:produkId', (req, res, next) => {
         })
 })
 
-router.get('/:produkId', (req, res, next) => {
+router.get('/:produkId',checkAuth, (req, res, next) => {
     const id = req.params.produkId;
 
     Produk.findById(id)

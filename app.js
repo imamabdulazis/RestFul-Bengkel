@@ -23,6 +23,7 @@ app.use((req, res, next) => {
 })
 
 const userRoutes = require('./api/routes/user');
+const kategoriRoutes = require('./api/routes/kategori');
 
 const produkRoutes = require("./api/routes/produk");
 const servisRoutes = require("./api/routes/servis");
@@ -33,6 +34,7 @@ app.use('/uploads', express.static('uploads'));
 
 
 app.use('/user', userRoutes);
+app.use('/kategori', kategoriRoutes);
 app.use("/produk", produkRoutes);
 app.use("/servis", servisRoutes);
 app.use("/order", orderRoutes);
