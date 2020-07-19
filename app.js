@@ -23,6 +23,7 @@ app.use((req, res, next) => {
 })
 
 const userRoutes = require('./api/routes/user');
+const bengkelRoutes = require('./api/routes/bengkel');
 const kategoriRoutes = require('./api/routes/kategori');
 
 const produkRoutes = require("./api/routes/produk");
@@ -32,9 +33,11 @@ const orderRoutes = require("./api/routes/order");
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
 
-
 app.use('/user', userRoutes);
+app.use('/bengkel', bengkelRoutes);
+
 app.use('/kategori', kategoriRoutes);
+
 app.use("/produk", produkRoutes);
 app.use("/servis", servisRoutes);
 app.use("/order", orderRoutes);

@@ -30,17 +30,17 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-const User = require('../models/user');
+const Bengkel = require('../models/bengkel');
 const app = require('../../app');
 
-router.post('/signup', upload.single('userImage'), (req, res, next) => {
-    User.find({ email: req.body.email })
+router.post('/signup', upload.single('bengkelImage'), (req, res, next) => {
+    Bengkel.find({ nama_bengkel: req.body.nama_bengkel })
         .exec()
-        .then(user => {
-            if (user.length >= 1) {
+        .then(nambeng => {
+            if (nambeng.length >= 1) {
                 return res.status(409).json({
                     status: 409,
-                    message: "Email telah tersedia"
+                    message: "Nama Bengkel Telah Dipakai!"
                 })
             } else {
                 bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -50,10 +50,11 @@ router.post('/signup', upload.single('userImage'), (req, res, next) => {
                             message: err
                         })
                     } else {
-                        const user = new User({
+                        const bengkel = new Bengkel({
                             _id: mongoose.Types.ObjectId(),
-                            image_url: _.isEmpty(req.file) ? "http://localhost:3000/uploads/user.jpg" : "http://localhost:3000/" + req.file.path,
-                            nama: req.body.nama,
+                            image_url: _.isEmpty(req.file) ? "http://localhost:3000/uploads/bengkel.png" : "http://localhost:3000/" + req.file.path,
+                            nama_bengkel: req.body.nama_bengkel,
+                            nama_pemilik: req.body.nama_pemilik,
                             email: req.body.email,
                             nomor_telp: req.body.nomor_telp,
                             alamat: req.body.alamat,
@@ -66,12 +67,12 @@ router.post('/signup', upload.single('userImage'), (req, res, next) => {
                                 ]
                             }
                         });
-                        user
+                        bengkel
                             .save()
                             .then(result => {
                                 res.status(200).json({
                                     status: 200,
-                                    message: `Berhasil mendaftar ${req.body.email}`
+                                    message: `Berhasil mendaftar bengkel ${req.body.nama_bengkel}`
                                 })
                             })
                             .catch(err => {
@@ -87,17 +88,17 @@ router.post('/signup', upload.single('userImage'), (req, res, next) => {
 });
 
 router.post('/login', (req, res) => {
-    User.find({ email: req.body.email })
+    Bengkel.find({ email: req.body.email })
         .exec()
-        .then(user => {
-            if (user.length < 1) {
+        .then(bengkel => {
+            if (bengkel.length < 1) {
                 return res.status(404).json({
                     status: 404,
                     message: "Email tidak ditemukan!"
                 })
             }
 
-            bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+            bcrypt.compare(req.body.password, bengkel[0].password, (err, result) => {
                 if (err) {
                     return status(401).json({
                         status: 401,
@@ -106,8 +107,8 @@ router.post('/login', (req, res) => {
                 }
                 if (result) {
                     const token = jwt.sign({
-                        email: user[0].email,
-                        userId: user[0]._id,
+                        email: bengkel[0].email,
+                        userId: bengkel[0]._id,
                     }, process.env.JWT_KEY,
                         {
                             expiresIn: '2 days'
@@ -133,9 +134,9 @@ router.post('/login', (req, res) => {
         });
 })
 
-router.get('/', (req, res) => {
-    User.find()
-        .select('_id image_url nama email nomor_telp alamat location')
+router.get('/', checkAuth, (req, res) => {
+    Bengkel.find()
+        .select('_id image_url nama_bengkel nama_pemilik email nomor_telp alamat location')
         .exec()
         .then(doc => {
             res.status(200).json({
@@ -151,22 +152,14 @@ router.get('/', (req, res) => {
         })
 })
 
-router.get('/:userId', (req, res) => {
-    User.findById(req.params.userId)
-        .select('_id image_url nama email nomor_telp alamat location')
+router.get('/:bengkelId', checkAuth, (req, res) => {
+    Bengkel.findById(req.params.bengkelId)
+        .select('_id image_url nama_bengkel nama_pemilik email nomor_telp alamat location')
         .exec()
         .then(doc => {
             res.status(200).json({
                 status: 200,
-                data: {
-                    _id: doc._id,
-                    image_url: doc.image_url,
-                    nama: doc.nama,
-                    email: doc.email,
-                    nomor_telp: doc.nomor_telp,
-                    alamat: doc.alamat,
-                    location: doc.location
-                }
+                data: doc
             })
         }).catch(err => {
             res.status(500).json({
@@ -176,13 +169,13 @@ router.get('/:userId', (req, res) => {
         })
 })
 
-router.delete('/:userId', (req, res) => {
-    User.remove({ _id: req.params.userId })
+router.delete('/:bengkelId', checkAuth, (req, res) => {
+    Bengkel.remove({ _id: req.params.bengkelId })
         .exec()
         .then(result => {
             res.status(200).json({
                 status: 200,
-                message: "Berhasil hapus user",
+                message: "Berhasil hapus bengkel",
             })
         })
         .catch(err => {
