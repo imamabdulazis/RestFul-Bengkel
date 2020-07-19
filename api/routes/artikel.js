@@ -1,21 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Kategori = require('../models/kategori');
+const Artikel = require('../models/artikel');
 const checkAuth = require('../middleware/check-auth');
 
 router.get('/', checkAuth, (req, res, next) => {
-    Kategori.find()
-        .select('_id nama_kategori bengkel')
-        .populate('bengkel', 'nama_bengkel')
+    Artikel.find()
+        .select('_id title content created_at')
+        .populate('bengkel', 'nama_bengkel nomor_telp')
         .exec()
         .then(doc => {
-            res.status(200).json({
-                status: 200,
-                message: 'Berhasil retrieve data kategori',
-                jumlah: doc.length,
-                data: doc
-            });
+            if (doc.length < 1) {
+                res.status(404).json({
+                    status: 404,
+                    message: 'Data artikel tidak ada!',
+                });
+            } else {
+                res.status(200).json({
+                    status: 200,
+                    message: 'Berhasil retrieve data artikel',
+                    jumlah: doc.length,
+                    data: doc
+                });
+            }
         })
         .catch(err => {
             res.status(500).json({
@@ -26,26 +33,27 @@ router.get('/', checkAuth, (req, res, next) => {
 })
 
 router.post('/', checkAuth, (req, res, next) => {
-    Kategori.find({ nama_kategori: req.body.nama_kategori })
+    Artikel.find({ title: req.body.title })
         .then(result => {
             if (!result) {
                 res.status(409).json({
                     status: 409,
-                    message: "Kategori sudah tersedia"
+                    message: "Judul sudah tersedia pernah ditulis sebelumnya"
                 })
             }
-            const kategori = new Kategori({
+            const artikel = new Artikel({
                 _id: mongoose.Types.ObjectId(),
-                nama_kategori: req.body.nama_kategori,
+                title: req.body.title,
+                content: req.body.content,
                 bengkel: req.body.bengkelId,
             })
-            return kategori.save()
+            return artikel.save()
         })
         .then(result => {
             console.log(result);
             res.status(200).json({
                 status: 200,
-                message: "Berhasil menambah kategori!",
+                message: "Berhasil menambah artikel!",
                 data: result
             });
         })
@@ -63,12 +71,12 @@ router.patch('/:kategoriId', checkAuth, (req, res, next) => {
         updateOps[ops.propName] = ops.value;
     }
 
-    Kategori.update({ _id: id }, { $set: updateOps })
+    Artikel.update({ _id: id }, { $set: updateOps })
         .exec()
         .then(doc => {
             res.status(200).json({
                 status: 200,
-                message: `Berhasil update data kategori`,
+                message: `Berhasil update data artikel`,
                 data: doc,
             });
         })
@@ -77,8 +85,8 @@ router.patch('/:kategoriId', checkAuth, (req, res, next) => {
         })
 })
 
-router.delete('/:kategoriId', checkAuth, (req, res, next) => {
-    Kategori.remove({ _id: req.params.kategoriId })
+router.delete('/:artikelId', checkAuth, (req, res, next) => {
+    Artikel.remove({ _id: req.params.artikelId })
         .exec()
         .then(result => {
             if (!result) {
@@ -89,7 +97,7 @@ router.delete('/:kategoriId', checkAuth, (req, res, next) => {
             }
             res.status(200).json({
                 status: 200,
-                message: "Kategori Berhasil di hapus"
+                message: "Artikel Berhasil di hapus"
             })
         })
         .catch(err => {
@@ -101,10 +109,10 @@ router.delete('/:kategoriId', checkAuth, (req, res, next) => {
 
 });
 
-router.get('/:kategoriId', checkAuth, (req, res, next) => {
-    Kategori.findById(req.params.kategoriId)
-        .select('_id nama_kategori bengkel')
-        .populate('bengkel', 'nama_bengkel')
+router.get('/:artikelId', checkAuth, (req, res, next) => {
+    Artikel.findById(req.params.artikelId)
+        .select('_id title content created_at')
+        .populate('bengkel', 'nama_bengkel nomor_telp')
         .exec()
         .then(doc => {
             res.status(200).json({

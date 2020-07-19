@@ -116,7 +116,8 @@ router.post('/login', (req, res) => {
                     return res.status(200).json({
                         status: 200,
                         message: "Berhasil login!",
-                        token: token
+                        token: token,
+                        data:user[0]
                     })
                 }
                 res.status(401).json({

@@ -30,6 +30,7 @@ const produkRoutes = require("./api/routes/produk");
 const servisRoutes = require("./api/routes/servis");
 const orderRoutes = require("./api/routes/order");
 
+const artikelRoutes = require('./api/routes/artikel');
 // by id
 const kategoriBengkelRoutes = require('./api/routes/_kategoriBengkel');
 const produkBengkelRoutes = require('./api/routes/_produkBengkel');
@@ -46,6 +47,8 @@ app.use('/kategori', kategoriRoutes);
 app.use("/produk", produkRoutes);
 app.use("/servis", servisRoutes);
 app.use("/order", orderRoutes);
+
+app.use('/artikel', artikelRoutes);
 
 
 // by id
