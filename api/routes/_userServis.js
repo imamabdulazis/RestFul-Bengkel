@@ -5,10 +5,10 @@ const Servis = require('../models/servis');
 const _ = require('lodash');
 const checkAuth = require('../middleware/check-auth');
 
-router.get('/:bengkelId', (req, res) => {
-    Servis.find({ bengkel: req.params.bengkelId })
-        .populate('bengkel', 'nama_bengkel nomor_telp')
+router.get('/:userId', (req, res) => {
+    Servis.find({ user: req.params.userId })
         .populate('user', 'nama email alamat')
+        .populate('bengkel', 'nama_bengkel nomor_telp')
         .populate('produk', 'nama harga')
         .then(doc => {
             if (_.isEmpty(doc)) {

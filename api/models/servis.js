@@ -4,6 +4,7 @@ const servisSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     created_at: { type: Date },
     updated_at: { type: Date },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
     bengkel: { type: mongoose.Schema.Types.ObjectId, ref: 'Bengkel', require: true },
     produk: { type: mongoose.Schema.Types.ObjectId, ref: 'Produk', require: true },
     jumlah_produk: { type: Number, default: 1 },

@@ -111,7 +111,7 @@ router.post('/login', (req, res) => {
                         userId: bengkel[0]._id,
                     }, process.env.JWT_KEY,
                         {
-                            expiresIn: '3 days'
+                            expiresIn: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
                         }
                     );
                     return res.status(200).json({
@@ -133,6 +133,28 @@ router.post('/login', (req, res) => {
                 message: err
             })
         });
+})
+
+router.patch('/:bengkelId', checkAuth, (req, res, next) => {
+    const id = req.params.bengkelId;
+    const updateOps = {}
+
+    for (const ops of req.body) {
+        updateOps[ops.propName] = ops.value;
+    }
+
+    Bengkel.update({ _id: id }, { $set: updateOps })
+        .exec()
+        .then(doc => {
+            res.status(200).json({
+                status: 200,
+                message: `Berhasil update data bengkel`,
+                data: doc,
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ status: 500, message: err });
+        })
 })
 
 router.get('/', checkAuth, (req, res) => {

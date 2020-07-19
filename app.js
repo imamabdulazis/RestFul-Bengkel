@@ -31,10 +31,14 @@ const servisRoutes = require("./api/routes/servis");
 const orderRoutes = require("./api/routes/order");
 
 const artikelRoutes = require('./api/routes/artikel');
-// by id
+// by bengkel
 const kategoriBengkelRoutes = require('./api/routes/_kategoriBengkel');
 const produkBengkelRoutes = require('./api/routes/_produkBengkel');
 const servisBengkelRoutes = require('./api/routes/_servisBengkel');
+
+// by user
+const userServisRoutes = require('./api/routes/_userServis');
+
 
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
@@ -51,10 +55,13 @@ app.use("/order", orderRoutes);
 app.use('/artikel', artikelRoutes);
 
 
-// by id
+// by bengkel
 app.use('/bengkel/kategori', kategoriBengkelRoutes);
 app.use('/bengkel/produk', produkBengkelRoutes);
 app.use('/bengkel/servis', servisBengkelRoutes);
+
+// by user
+app.use('/user/servis', userServisRoutes);
 
 
 

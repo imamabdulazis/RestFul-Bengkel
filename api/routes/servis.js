@@ -8,6 +8,8 @@ router.get('/', (req, res, next) => {
     Servis.find()
         .select('_id created_at jumlah_produk jenis_servis total_bayar keterangan')
         .populate('produk', 'nama')
+        .populate('bengkel', 'nama_bengkel nomor_telp')
+        .populate('user', 'nama email nomor_telp alamat')
         .exec()
         .then(doc => {
             res.status(200).json({
@@ -37,6 +39,7 @@ router.post('/', (req, res, next) => {
             const servis = new Servis({
                 _id: mongoose.Types.ObjectId(),
                 created_at: new Date().toISOString(),
+                user: req.body.userId,
                 bengkel: req.body.bengkelId,
                 produk: req.body.produkId,
                 jumlah_produk: req.body.jumlah_produk,

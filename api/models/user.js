@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema({
     password: { type: String, required: true },
     location: {
         type: pointSchema,
-        required: true
+        required: false
     }
 })
 
