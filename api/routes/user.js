@@ -52,7 +52,7 @@ router.post('/signup', upload.single('userImage'), (req, res, next) => {
                     } else {
                         const user = new User({
                             _id: mongoose.Types.ObjectId(),
-                            image_url: _.isEmpty(req.file) ? "http://localhost:3000/uploads/user.jpg" : "http://localhost:3000/" + req.file.path,
+                            image_url: _.isEmpty(req.file) ? process.env.base_api + "uploads/user.jpg" : process.env.base_api + req.file.path,
                             nama: req.body.nama,
                             email: req.body.email,
                             nomor_telp: req.body.nomor_telp,
@@ -110,14 +110,14 @@ router.post('/login', (req, res) => {
                         userId: user[0]._id,
                     }, process.env.JWT_KEY,
                         {
-                            expiresIn:  Math.floor(Date.now() / 1000) + (60 * 60 * 24),
+                            expiresIn: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
                         }
                     );
                     return res.status(200).json({
                         status: 200,
                         message: "Berhasil login!",
                         token: token,
-                        data:user[0]
+                        data: user[0]
                     })
                 }
                 res.status(401).json({

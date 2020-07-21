@@ -63,7 +63,7 @@ router.post('/', upload.single('produkImage'), checkAuth, (req, res, next) => {
                 created_at: new Date().toISOString(),
                 bengkel: req.body.bengkelId,
                 kategori: req.body.kategoriId,
-                image_url: "http://localhost:3000/" + req.file.path,
+                image_url: process.env.base_api + req.file.path,
                 nama: req.body.nama,
                 harga: req.body.harga,
                 stok: req.body.stok,

@@ -1,6 +1,7 @@
 {
     "env": {
         "MONGO_ATLAS_PW": "jsWvGiP3YBRN3AUa",
-        "JWT_KEY": "secret"
+        "JWT_KEY": "secret",
+        "base_api": "http://192.168.100.24:3000/"
     }
 }

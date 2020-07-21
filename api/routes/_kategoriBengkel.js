@@ -51,8 +51,8 @@ router.patch('/:kategoriId', checkAuth, (req, res, next) => {
         })
 })
 
-router.delete('/:kategoriId', checkAuth, (req, res, next) => {
-    Produk.remove({ _id:  req.params.kategoriId })
+router.delete('/:kategoriId', (req, res, next) => {
+    Kategori.remove({ _id:  req.params.kategoriId })
         .exec()
         .then(doc => {
             res.status(200).json({

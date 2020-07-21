@@ -52,7 +52,7 @@ router.post('/signup', upload.single('bengkelImage'), (req, res, next) => {
                     } else {
                         const bengkel = new Bengkel({
                             _id: mongoose.Types.ObjectId(),
-                            image_url: _.isEmpty(req.file) ? "http://localhost:3000/uploads/bengkel.png" : "http://localhost:3000/" + req.file.path,
+                            image_url: _.isEmpty(req.file) ? process.env.base_api + "uploads/bengkel.png" : process.env.base_api + req.file.path,
                             nama_bengkel: req.body.nama_bengkel,
                             nama_pemilik: req.body.nama_pemilik,
                             email: req.body.email,
