@@ -80,4 +80,9 @@ app.use((error, req, res, next) => {
     })
 })
 
+app.get("/",(req,res)=>{
+    console.log("server telah berjalan");
+    res.send("Hallo from BengkelTA")
+})
+
 module.exports = app;
