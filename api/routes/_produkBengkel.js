@@ -8,7 +8,7 @@ const checkAuth = require('../middleware/check-auth');
 router.get('/:bengkelId', (req, res) => {
     Produk.find({ bengkel: req.params.bengkelId })
         .populate('bengkel', 'nama_bengkel')
-        // .populate('kategori', 'nama_kategori')
+        .populate('kategori', 'nama_kategori')
         .then(doc => {
             if (_.isEmpty(doc)) {
                 res.status(404).json({
@@ -31,7 +31,7 @@ router.get('/:bengkelId', (req, res) => {
         })
 })
 
-router.patch('/:produkId', checkAuth, (req, res, next) => {
+router.patch('/:produkId', (req, res, next) => {
     const id = req.params.produkId;
     const updateOps = {}
 

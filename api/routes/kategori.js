@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Kategori = require('../models/kategori');
 const checkAuth = require('../middleware/check-auth');
 
-router.get('/', checkAuth, (req, res, next) => {
+router.get('/', (req, res, next) => {
     Kategori.find()
         .select('_id nama_kategori bengkel')
         .populate('bengkel', 'nama_bengkel')
@@ -25,7 +25,7 @@ router.get('/', checkAuth, (req, res, next) => {
         })
 })
 
-router.post('/', checkAuth, (req, res, next) => {
+router.post('/', (req, res, next) => {
     Kategori.find({ nama_kategori: req.body.nama_kategori })
         .then(result => {
             if (!result) {
@@ -55,7 +55,7 @@ router.post('/', checkAuth, (req, res, next) => {
         })
 })
 
-router.patch('/:kategoriId', checkAuth, (req, res, next) => {
+router.patch('/:kategoriId', (req, res, next) => {
     const id = req.params.kategoriId;
     const updateOps = {}
 
@@ -77,7 +77,7 @@ router.patch('/:kategoriId', checkAuth, (req, res, next) => {
         })
 })
 
-router.delete('/:kategoriId', checkAuth, (req, res, next) => {
+router.delete('/:kategoriId', (req, res, next) => {
     Kategori.remove({ _id: req.params.kategoriId })
         .exec()
         .then(result => {

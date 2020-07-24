@@ -29,7 +29,7 @@ router.get('/:bengkelId', (req, res) => {
         })
 })
 
-router.patch('/:kategoriId', checkAuth, (req, res, next) => {
+router.patch('/:kategoriId', (req, res, next) => {
     const id = req.params.kategoriId;
     const updateOps = {}
 

@@ -10,7 +10,8 @@ const storage = multer.diskStorage({
         cb(null, './uploads/');
     },
     filename: function (req, file, cb) {
-        cb(null, new Date().toISOString() + file.originalname);
+        console.log("FILE :", file)
+        cb(null, file.originalname);
     }
 })
 const fileFilter = (req, file, cb) => {
@@ -22,13 +23,13 @@ const fileFilter = (req, file, cb) => {
 }
 const upload = multer({
     storage: storage,
-    limits: {
-        fileSize: 1024 * 1024 * 5
-    },
-    fileFilter: fileFilter
+    // limits: {
+    //     fileSize: 1024 * 1024 * 5
+    // },
+    // fileFilter: fileFilter
 });
 
-router.get('/', checkAuth, (req, res, next) => {
+router.get('/', (req, res, next) => {
     Produk.find()
         .select('nama harga stok bengkel kategori image_url _id')
         .populate('bengkel', 'nama_bengkel')
@@ -49,7 +50,8 @@ router.get('/', checkAuth, (req, res, next) => {
         })
 })
 
-router.post('/', upload.single('produkImage'), checkAuth, (req, res, next) => {
+router.post('/', upload.single('produkImage'), (req, res, next) => {
+    console.log("console.log :", req.body)
     Kategori.findById(req.body.kategoriId)
         .then(kategori => {
             if (!kategori) {
@@ -69,7 +71,8 @@ router.post('/', upload.single('produkImage'), checkAuth, (req, res, next) => {
                 stok: req.body.stok,
                 status: req.body.status
             })
-            return produk.save()
+            console.log(req.file);
+            return produk.save();
         })
         .then(result => {
             res.status(200).json({
@@ -84,7 +87,7 @@ router.post('/', upload.single('produkImage'), checkAuth, (req, res, next) => {
         })
 })
 
-router.patch('/:produkId', checkAuth, (req, res, next) => {
+router.patch('/:produkId', (req, res, next) => {
     const id = req.params.produkId;
     const updateOps = {}
 
@@ -106,7 +109,7 @@ router.patch('/:produkId', checkAuth, (req, res, next) => {
         })
 })
 
-router.delete('/:produkId', checkAuth, (req, res, next) => {
+router.delete('/:produkId', (req, res, next) => {
     const id = req.params.produkId;
 
     Produk.remove({ _id: id })
@@ -122,7 +125,7 @@ router.delete('/:produkId', checkAuth, (req, res, next) => {
         })
 })
 
-router.get('/:produkId', checkAuth, (req, res, next) => {
+router.get('/:produkId', (req, res, next) => {
     const id = req.params.produkId;
 
     Produk.findById(id)

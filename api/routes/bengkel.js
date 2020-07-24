@@ -76,6 +76,7 @@ router.post('/signup', upload.single('bengkelImage'), (req, res, next) => {
                                 })
                             })
                             .catch(err => {
+                                console.log(err)
                                 res.status(500).json({
                                     status: 500,
                                     message: err
@@ -88,6 +89,7 @@ router.post('/signup', upload.single('bengkelImage'), (req, res, next) => {
 });
 
 router.post('/login', (req, res) => {
+    console.log(req.body)
     Bengkel.find({ email: req.body.email })
         .exec()
         .then(bengkel => {
