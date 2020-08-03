@@ -1,8 +1,14 @@
 const http = require('http');
 const app = require('./app');
 
-const server = http.createServer(app);
+const port = process.env.PORT || 3000;
 
-server.listen(0.0.0.0 || 3000, function () {
-    console.log("Express server listening on port %d in %s mode", this.address().port, server.env);
-});
+// const server = http.createServer(app);
+
+// server.listen(port, () => {
+//     console.log("APP SART 3000");
+// });
+
+app.listen(port, () => {
+    console.log("listen port 3000")
+})
