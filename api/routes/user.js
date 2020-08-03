@@ -137,7 +137,7 @@ router.post('/login', (req, res) => {
         });
 })
 
-router.get('/', (req, res) => {
+router.get('/', checkAuth, (req, res) => {
     User.find()
         .select('_id image_url nama email nomor_telp alamat location')
         .exec()
