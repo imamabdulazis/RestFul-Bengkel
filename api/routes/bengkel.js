@@ -111,7 +111,7 @@ router.post('/login', (req, res) => {
                     const token = jwt.sign({
                         email: bengkel[0].email,
                         userId: bengkel[0]._id,
-                    }, process.env.JWT_KEY,
+                    }, "secret",
                         {
                             expiresIn: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
                         }

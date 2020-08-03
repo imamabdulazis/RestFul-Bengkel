@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 
 mongoose.connect(
-    'mongodb+srv://devopsimun:' + process.env.MONGO_ATLAS_PW + '@belajar-mghf7.mongodb.net/Bengkel?retryWrites=true&w=majority', {
+    'mongodb+srv://devopsimun:jsWvGiP3YBRN3AUa@belajar-mghf7.mongodb.net/Bengkel?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
