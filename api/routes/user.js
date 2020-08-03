@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { uuid } = require("uuidv4");
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -32,8 +33,10 @@ const upload = multer({
 
 const User = require('../models/user');
 const app = require('../../app');
+const config = require('../../utils/config');
 
 router.post('/signup', upload.single('userImage'), (req, res, next) => {
+    let generatedToken = uuid();
     User.find({ email: req.body.email })
         .exec()
         .then(user => {
@@ -52,7 +55,7 @@ router.post('/signup', upload.single('userImage'), (req, res, next) => {
                     } else {
                         const user = new User({
                             _id: mongoose.Types.ObjectId(),
-                            image_url: _.isEmpty(req.file) ? process.env.base_api + "uploads/user.jpg" : process.env.base_api + req.file.path,
+                            image_url: _.isEmpty(req.file) ? `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/no-img.png?alt=media&token=${generatedToken}` : process.env.base_api + req.file.path,
                             nama: req.body.nama,
                             email: req.body.email,
                             nomor_telp: req.body.nomor_telp,

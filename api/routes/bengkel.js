@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const checkAuth = require('../middleware/check-auth');
 const _ = require('lodash');
+const { uuid } = require("uuidv4");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -32,8 +33,10 @@ const upload = multer({
 
 const Bengkel = require('../models/bengkel');
 const app = require('../../app');
+const config = require('../../utils/config');
 
 router.post('/signup', upload.single('bengkelImage'), (req, res, next) => {
+    let generatedToken = uuid();
     Bengkel.find({ nama_bengkel: req.body.nama_bengkel })
         .exec()
         .then(nambeng => {
@@ -52,7 +55,7 @@ router.post('/signup', upload.single('bengkelImage'), (req, res, next) => {
                     } else {
                         const bengkel = new Bengkel({
                             _id: mongoose.Types.ObjectId(),
-                            image_url: _.isEmpty(req.file) ? process.env.base_api + "uploads/bengkel.png" : process.env.base_api + req.file.path,
+                            image_url: _.isEmpty(req.file) ?`https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/bengkel.png?alt=media&token=${generatedToken}` : process.env.base_api + req.file.path,
                             nama_bengkel: req.body.nama_bengkel,
                             nama_pemilik: req.body.nama_pemilik,
                             email: req.body.email,
