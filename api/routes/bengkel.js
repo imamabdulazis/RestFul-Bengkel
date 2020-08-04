@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const checkAuth = require('../middleware/check-auth');
 const _ = require('lodash');
-const { uuid } = require("uuidv4");
+const { v4: uuid } = require('uuid');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
