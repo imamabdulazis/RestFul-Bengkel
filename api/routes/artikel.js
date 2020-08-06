@@ -10,7 +10,7 @@ const multer = Multer({
     storage: Multer.memoryStorage(),
 })
 
-router.get('/', checkAuth, (req, res, next) => {
+router.get('/', (req, res, next) => {
     Artikel.find()
         .select('_id image_url title content created_at')
         .populate('bengkel', 'nama_bengkel nomor_telp')
@@ -38,7 +38,7 @@ router.get('/', checkAuth, (req, res, next) => {
         })
 })
 
-router.post('/', multer.single('image_url'), checkAuth, (req, res, next) => {
+router.post('/', multer.single('image_url'), (req, res, next) => {
     Artikel.find({ title: req.body.title })
         .then(result => {
             if (!result) {
@@ -78,7 +78,7 @@ router.post('/', multer.single('image_url'), checkAuth, (req, res, next) => {
         })
 })
 
-router.patch('/:kategoriId', checkAuth, (req, res, next) => {
+router.patch('/:kategoriId', (req, res, next) => {
     const id = req.params.kategoriId;
     const updateOps = {}
 
@@ -100,7 +100,7 @@ router.patch('/:kategoriId', checkAuth, (req, res, next) => {
         })
 })
 
-router.delete('/:artikelId', checkAuth, (req, res, next) => {
+router.delete('/:artikelId', (req, res, next) => {
     Artikel.remove({ _id: req.params.artikelId })
         .exec()
         .then(result => {
@@ -124,7 +124,7 @@ router.delete('/:artikelId', checkAuth, (req, res, next) => {
 
 });
 
-router.get('/:artikelId', checkAuth, (req, res, next) => {
+router.get('/:artikelId', (req, res, next) => {
     Artikel.findById(req.params.artikelId)
         .select('_id title content created_at')
         .populate('bengkel', 'nama_bengkel nomor_telp')
