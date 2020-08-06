@@ -4,6 +4,7 @@ const artikelSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     created_at: { type: Date },
     updated_at: { type: Date },
+    image_url: { type: String, require: true },
     title: { type: String, require: true },
     content: String,
     bengkel: { type: mongoose.Schema.Types.ObjectId, ref: 'Bengkel', require: true }

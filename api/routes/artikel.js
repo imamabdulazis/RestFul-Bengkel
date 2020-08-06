@@ -3,10 +3,16 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Artikel = require('../models/artikel');
 const checkAuth = require('../middleware/check-auth');
+const Multer = require('multer');
+const { uploadImageToStorage } = require('../../utils/uploader');
+
+const multer = Multer({
+    storage: Multer.memoryStorage(),
+})
 
 router.get('/', checkAuth, (req, res, next) => {
     Artikel.find()
-        .select('_id title content created_at')
+        .select('_id image_url title content created_at')
         .populate('bengkel', 'nama_bengkel nomor_telp')
         .exec()
         .then(doc => {
@@ -32,7 +38,7 @@ router.get('/', checkAuth, (req, res, next) => {
         })
 })
 
-router.post('/', checkAuth, (req, res, next) => {
+router.post('/', multer.single('image_url'), checkAuth, (req, res, next) => {
     Artikel.find({ title: req.body.title })
         .then(result => {
             if (!result) {
@@ -41,13 +47,22 @@ router.post('/', checkAuth, (req, res, next) => {
                     message: "Judul sudah tersedia pernah ditulis sebelumnya"
                 })
             }
-            const artikel = new Artikel({
-                _id: mongoose.Types.ObjectId(),
-                title: req.body.title,
-                content: req.body.content,
-                bengkel: req.body.bengkelId,
-            })
-            return artikel.save()
+            let file = req.file;
+            if (file) {
+                uploadImageToStorage(file).then((success) => {
+                    const artikel = new Artikel({
+                        _id: mongoose.Types.ObjectId(),
+                        image_url: success,
+                        title: req.body.title,
+                        content: req.body.content,
+                        bengkel: req.body.bengkelId,
+                    })
+                    return artikel.save();
+                }).catch((err) => {
+                    console.error(err);
+                    res.status(500).json({ status: 500, message: err })
+                })
+            }
         })
         .then(result => {
             console.log(result);
