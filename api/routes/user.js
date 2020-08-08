@@ -165,8 +165,8 @@ router.get('/:userId', checkAuth, (req, res) => {
         })
 })
 
-router.patch('/:produkId', (req, res, next) => {
-    const id = req.params.produkId;
+router.patch('/:userId', (req, res, next) => {
+    const id = req.params.userId;
     const updateOps = {}
 
     for (const ops of req.body) {
@@ -178,8 +178,7 @@ router.patch('/:produkId', (req, res, next) => {
         .then(doc => {
             res.status(200).json({
                 status: 200,
-                message: `Berhasil update user`,
-                data: doc,
+                message: `Berhasil update user`
             });
         })
         .catch(err => {
@@ -215,8 +214,7 @@ router.patch('/image/:userId', multer.single('userImage'), checkAuth, (req, res)
                 .then(doc => {
                     res.status(200).json({
                         status: 200,
-                        message: `Berhasil update image produk`,
-                        data: doc,
+                        message: `Berhasil update image profil`
                     });
                 })
                 .catch(err => {

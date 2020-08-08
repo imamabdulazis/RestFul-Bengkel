@@ -6,6 +6,7 @@ const userAdminSchem = mongoose.Schema({
     image_url: { type: String, required: true },
     nama: { type: String, required: true },
     email: { type: String, required: true },
+    password: { type: String, required: true },
 });
 
 module.exports = mongoose.model('userAdmin', userAdminSchem);

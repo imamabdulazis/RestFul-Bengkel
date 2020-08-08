@@ -13,6 +13,13 @@ const app = require('../../app');
 const config = require('../../utils/config');
 const { uploadImageToStorage } = require('../../utils/uploader');
 
+const multer = Multer({
+    storage: Multer.memoryStorage(),
+    // limits: {
+    //     fileSize: 5 * 1024 * 1024 // no larger than 5mb, you can change as needed.
+    // }
+});
+
 router.post('/signup', (req, res, next) => {
     let generatedToken = uuid();
     UserAdmin.find({ email: req.body.email })
@@ -22,6 +29,11 @@ router.post('/signup', (req, res, next) => {
                 return res.status(409).json({
                     status: 409,
                     message: "Email telah tersedia"
+                })
+            } else if (req.body.oasswird < 6) {
+                return res.status(409).json({
+                    status: 409,
+                    message: "Password terlalu sedikit"
                 })
             } else {
                 bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -123,5 +135,75 @@ router.get('/', checkAuth, (req, res) => {
             })
         })
 })
+
+router.patch('/:userId', (req, res, next) => {
+    const id = req.params.userId;
+    const updateOps = {}
+
+    for (const ops of req.body) {
+        updateOps[ops.propName] = ops.value;
+    }
+
+    UserAdmin.update({ _id: id }, { $set: updateOps })
+        .exec()
+        .then(doc => {
+            res.status(200).json({
+                status: 200,
+                message: `Berhasil update admin`,
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ status: 500, message: err });
+        })
+})
+
+router.delete('/:userId', (req, res) => {
+    UserAdmin.remove({ _id: req.params.userId })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                status: 200,
+                message: "Berhasil hapus user",
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                status: 500,
+                message: err
+            })
+        })
+});
+
+router.patch('/image/:userId', multer.single('adminImage'), checkAuth, (req, res) => {
+    const id = req.params.userId;
+
+    let file = req.file;
+    if (file) {
+        uploadImageToStorage(file).then((success) => {
+            UserAdmin.update({ _id: id }, { $set: { image_url: success } })
+                .exec()
+                .then(doc => {
+                    res.status(200).json({
+                        status: 200,
+                        message: `Berhasil update image admin`
+                    });
+                })
+                .catch(err => {
+                    res.status(500).json({ status: 500, message: err });
+                })
+        }).catch((error) => {
+            console.error(error);
+            res.status(500).json({ status: 500, message: err });
+        })
+    } else {
+        res.status(500).json({
+            status: 500,
+            message: "Tidak ada gambar"
+        });
+    }
+
+})
+
+
 
 module.exports = router;
