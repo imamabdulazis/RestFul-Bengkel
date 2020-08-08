@@ -39,6 +39,8 @@ const servisBengkelRoutes = require('./api/routes/_servisBengkel');
 // by user
 const userServisRoutes = require('./api/routes/_userServis');
 
+const findBengkel = require('./api/routes/_findNearbyBengkel');
+
 
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
@@ -62,6 +64,10 @@ app.use('/bengkel/servis', servisBengkelRoutes);
 
 // by user
 app.use('/user/servis', userServisRoutes);
+
+
+// find bengkel
+app.use('/findBengkel', findBengkel);
 
 
 

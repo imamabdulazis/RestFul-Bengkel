@@ -24,10 +24,8 @@ const bengkelSchema = mongoose.Schema({
     nomor_telp: { type: String, required: true },
     alamat: { type: String, required: true },
     password: { type: String, required: true },
-    location: {
-        type: pointSchema,
-        required: true
-    }
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true },
 })
 
 bengkelSchema.pre('save', function (next) {

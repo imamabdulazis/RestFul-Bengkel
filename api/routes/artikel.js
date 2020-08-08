@@ -13,7 +13,6 @@ const multer = Multer({
 router.get('/', (req, res, next) => {
     Artikel.find()
         .select('_id image_url title content created_at')
-        .populate('bengkel', 'nama_bengkel nomor_telp')
         .exec()
         .then(doc => {
             if (doc.length < 1) {
@@ -55,7 +54,6 @@ router.post('/', multer.single('image_url'), (req, res, next) => {
                         image_url: success,
                         title: req.body.title,
                         content: req.body.content,
-                        bengkel: req.body.bengkelId,
                     })
                     return artikel.save();
                 }).catch((err) => {

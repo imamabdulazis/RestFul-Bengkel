@@ -3,40 +3,22 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
 const checkAuth = require('../middleware/check-auth');
 const _ = require('lodash');
+const Multer = require('multer');
 const { v4: uuid } = require('uuid');
+const Bengkel = require('../models/bengkel');
+const config = require('../../utils/config');
+const { uploadImageToStorage } = require('../../utils/uploader');
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads/');
-    },
-    filename: function (req, file, cb) {
-        cb(null, new Date().toISOString() + file.originalname);
-    }
-})
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-        cb(null, true);
-    } else {
-        cb(null, false);
-    }
-}
-const upload = multer({
-    storage: storage,
-    limits: {
-        fileSize: 1024 * 1024 * 5
-    },
-    fileFilter: fileFilter
+const multer = Multer({
+    storage: Multer.memoryStorage(),
+    // limits: {
+    //     fileSize: 5 * 1024 * 1024 // no larger than 5mb, you can change as needed.
+    // }
 });
 
-const Bengkel = require('../models/bengkel');
-const app = require('../../app');
-const config = require('../../utils/config');
-
-router.post('/signup', upload.single('bengkelImage'), (req, res, next) => {
-    let generatedToken = uuid();
+router.post('/signup', (req, res) => {
     Bengkel.find({ nama_bengkel: req.body.nama_bengkel })
         .exec()
         .then(nambeng => {
@@ -53,22 +35,18 @@ router.post('/signup', upload.single('bengkelImage'), (req, res, next) => {
                             message: err
                         })
                     } else {
+                        let generatedToken = uuid();
                         const bengkel = new Bengkel({
                             _id: mongoose.Types.ObjectId(),
-                            image_url: _.isEmpty(req.file) ?`https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/bengkel.png?alt=media&token=${generatedToken}` : process.env.base_api + req.file.path,
+                            image_url: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/bengkel.png?alt=media&token=${generatedToken}`,
                             nama_bengkel: req.body.nama_bengkel,
                             nama_pemilik: req.body.nama_pemilik,
                             email: req.body.email,
                             nomor_telp: req.body.nomor_telp,
                             alamat: req.body.alamat,
                             password: hash,
-                            location: {
-                                type: "Point",
-                                coordinates: [
-                                    parseFloat(req.body.latitude),
-                                    parseFloat(req.body.longitude),
-                                ]
-                            }
+                            latitude: req.body.latitude,
+                            longitude: req.body.longitude,
                         });
                         bengkel
                             .save()
@@ -78,7 +56,7 @@ router.post('/signup', upload.single('bengkelImage'), (req, res, next) => {
                                     message: `Berhasil mendaftar bengkel ${req.body.nama_bengkel}`
                                 })
                             })
-                            .catch(err => {
+                            .catch((err) => {
                                 console.log(err)
                                 res.status(500).json({
                                     status: 500,
@@ -213,5 +191,37 @@ router.delete('/:bengkelId', checkAuth, (req, res) => {
             })
         })
 })
+
+// update foto profil bengkel
+router.patch('/image/:bengkelId', multer.single('bengkelImage'), checkAuth, (req, res) => {
+    const id = req.params.bengkelId;
+
+    let file = req.file;
+    if (file) {
+        uploadImageToStorage(file).then((success) => {
+            Bengkel.update({ _id: id }, { $set: { image_url: success } })
+                .exec()
+                .then(doc => {
+                    res.status(200).json({
+                        status: 200,
+                        message: `Berhasil update image bengkel`,
+                        data: doc,
+                    });
+                })
+                .catch(err => {
+                    res.status(500).json({ status: 500, message: err });
+                })
+        }).catch((error) => {
+            console.error(error);
+            res.status(500).json({ status: 500, message: err });
+        })
+    } else {
+        res.status(500).json({
+            status: 500,
+            message: "Tidak ada gambar"
+        });
+    }
+})
+
 
 module.exports = router;

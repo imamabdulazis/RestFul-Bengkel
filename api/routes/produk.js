@@ -69,6 +69,11 @@ router.post('/', multer.single('produkImage'), (req, res, next) => {
                 });
             }
 
+            res.status(500).json({
+                status: 500,
+                message: "Tidak ada gambar"
+            });
+
         })
         .then(result => {
             res.status(200).json({
@@ -103,6 +108,37 @@ router.patch('/:produkId', (req, res, next) => {
         .catch(err => {
             res.status(500).json({ status: 500, message: err });
         })
+})
+
+router.patch('/image/:produkId', multer.single('produkImage'), (req, res) => {
+    const id = req.params.produkId;
+
+    let file = req.file;
+    if (file) {
+        uploadImageToStorage(file).then((success) => {
+            Produk.update({ _id: id }, { $set: { image_url: success } })
+                .exec()
+                .then(doc => {
+                    res.status(200).json({
+                        status: 200,
+                        message: `Berhasil update image produk`,
+                        data: doc,
+                    });
+                })
+                .catch(err => {
+                    res.status(500).json({ status: 500, message: err });
+                })
+        }).catch((error) => {
+            console.error(error);
+            res.status(500).json({ status: 500, message: err });
+        })
+    } else {
+        res.status(500).json({
+            status: 500,
+            message: "Tidak ada gambar"
+        });
+    }
+
 })
 
 router.delete('/:produkId', (req, res, next) => {
