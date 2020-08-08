@@ -8,21 +8,14 @@ const Multer = require('multer');
 const checkAuth = require('../middleware/check-auth');
 const _ = require('lodash');
 
-const User = require('../models/user');
+const UserAdmin = require('../models/userAdmin');
 const app = require('../../app');
 const config = require('../../utils/config');
 const { uploadImageToStorage } = require('../../utils/uploader');
 
-const multer = Multer({
-    storage: Multer.memoryStorage(),
-    // limits: {
-    //     fileSize: 5 * 1024 * 1024 // no larger than 5mb, you can change as needed.
-    // }
-});
-
 router.post('/signup', (req, res, next) => {
     let generatedToken = uuid();
-    User.find({ email: req.body.email })
+    UserAdmin.find({ email: req.body.email })
         .exec()
         .then(user => {
             if (user.length >= 1) {
@@ -38,21 +31,12 @@ router.post('/signup', (req, res, next) => {
                             message: err
                         })
                     } else {
-                        const user = new User({
+                        const user = new UserAdmin({
                             _id: mongoose.Types.ObjectId(),
                             image_url: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/no-img.png?alt=media&token=${generatedToken}`,
                             nama: req.body.nama,
                             email: req.body.email,
-                            nomor_telp: req.body.nomor_telp,
-                            alamat: req.body.alamat,
                             password: hash,
-                            location: {
-                                type: "Point",
-                                coordinates: [
-                                    parseFloat(req.body.latitude),
-                                    parseFloat(req.body.longitude),
-                                ]
-                            }
                         });
                         user
                             .save()
@@ -75,7 +59,7 @@ router.post('/signup', (req, res, next) => {
 });
 
 router.post('/login', (req, res) => {
-    User.find({ email: req.body.email })
+    UserAdmin.find({ email: req.body.email })
         .exec()
         .then(user => {
             if (user.length < 1) {
@@ -123,8 +107,8 @@ router.post('/login', (req, res) => {
 })
 
 router.get('/', checkAuth, (req, res) => {
-    User.find()
-        .select('_id image_url nama email nomor_telp alamat location')
+    UserAdmin.find()
+        .select('_id image_url nama email')
         .exec()
         .then(doc => {
             res.status(200).json({
@@ -138,101 +122,6 @@ router.get('/', checkAuth, (req, res) => {
                 message: err
             })
         })
-})
-
-router.get('/:userId', checkAuth, (req, res) => {
-    User.findById(req.params.userId)
-        .select('_id image_url nama email nomor_telp alamat location')
-        .exec()
-        .then(doc => {
-            res.status(200).json({
-                status: 200,
-                data: {
-                    _id: doc._id,
-                    image_url: doc.image_url,
-                    nama: doc.nama,
-                    email: doc.email,
-                    nomor_telp: doc.nomor_telp,
-                    alamat: doc.alamat,
-                    location: doc.location
-                }
-            })
-        }).catch(err => {
-            res.status(500).json({
-                status: 200,
-                message: err
-            })
-        })
-})
-
-router.patch('/:produkId', (req, res, next) => {
-    const id = req.params.produkId;
-    const updateOps = {}
-
-    for (const ops of req.body) {
-        updateOps[ops.propName] = ops.value;
-    }
-
-    User.update({ _id: id }, { $set: updateOps })
-        .exec()
-        .then(doc => {
-            res.status(200).json({
-                status: 200,
-                message: `Berhasil update user`,
-                data: doc,
-            });
-        })
-        .catch(err => {
-            res.status(500).json({ status: 500, message: err });
-        })
-})
-
-router.delete('/:userId', (req, res) => {
-    User.remove({ _id: req.params.userId })
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                status: 200,
-                message: "Berhasil hapus user",
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                status: 500,
-                message: err
-            })
-        })
-})
-
-router.patch('/image/:userId', multer.single('userImage'), checkAuth, (req, res) => {
-    const id = req.params.userId;
-
-    let file = req.file;
-    if (file) {
-        uploadImageToStorage(file).then((success) => {
-            User.update({ _id: id }, { $set: { image_url: success } })
-                .exec()
-                .then(doc => {
-                    res.status(200).json({
-                        status: 200,
-                        message: `Berhasil update image produk`,
-                        data: doc,
-                    });
-                })
-                .catch(err => {
-                    res.status(500).json({ status: 500, message: err });
-                })
-        }).catch((error) => {
-            console.error(error);
-            res.status(500).json({ status: 500, message: err });
-        })
-    } else {
-        res.status(500).json({
-            status: 500,
-            message: "Tidak ada gambar"
-        });
-    }
-
 })
 
 module.exports = router;

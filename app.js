@@ -22,6 +22,8 @@ app.use((req, res, next) => {
     next();
 })
 
+const userAdminRoutes = require('./api/routes/userAdmin');
+
 const userRoutes = require('./api/routes/user');
 const bengkelRoutes = require('./api/routes/bengkel');
 const kategoriRoutes = require('./api/routes/kategori');
@@ -44,6 +46,8 @@ const findBengkel = require('./api/routes/_findNearbyBengkel');
 
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
+
+app.use('/userAdmin', userAdminRoutes);
 
 app.use('/user', userRoutes);
 app.use('/bengkel', bengkelRoutes);
