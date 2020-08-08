@@ -141,5 +141,36 @@ router.get('/:artikelId', (req, res, next) => {
         })
 })
 
+router.patch('/image/:artikelId', multer.single('artikelImage'), checkAuth, (req, res) => {
+    const id = req.params.artikelId;
+
+    let file = req.file;
+    if (file) {
+        uploadImageToStorage(file).then((success) => {
+            Artikel.update({ _id: id }, { $set: { image_url: success } })
+                .exec()
+                .then(doc => {
+                    res.status(200).json({
+                        status: 200,
+                        message: `Berhasil update image produk`,
+                        data: doc,
+                    });
+                })
+                .catch(err => {
+                    res.status(500).json({ status: 500, message: err });
+                })
+        }).catch((error) => {
+            console.error(error);
+            res.status(500).json({ status: 500, message: err });
+        })
+    } else {
+        res.status(500).json({
+            status: 500,
+            message: "Tidak ada gambar"
+        });
+    }
+
+})
+
 
 module.exports = router;
