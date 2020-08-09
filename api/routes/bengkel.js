@@ -85,7 +85,7 @@ router.post('/login', (req, res) => {
                 if (err) {
                     return status(401).json({
                         status: 401,
-                        message: "Username atau password salah!"
+                        message: "Email atau password salah!"
                     })
                 }
                 if (result) {
@@ -106,7 +106,7 @@ router.post('/login', (req, res) => {
                 }
                 res.status(401).json({
                     status: 401,
-                    message: "Username atau password salah!"
+                    message: "Email atau password salah!"
                 })
             })
         })
