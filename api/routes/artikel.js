@@ -12,7 +12,7 @@ const multer = Multer({
 
 router.get('/', (req, res, next) => {
     Artikel.find()
-        .select('_id image_url title content created_at')
+        .select('_id image_url title content created_at updated_at')
         .exec()
         .then(doc => {
             if (doc.length < 1) {
