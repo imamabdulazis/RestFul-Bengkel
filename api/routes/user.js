@@ -87,8 +87,8 @@ router.post('/login', (req, res) => {
 
             bcrypt.compare(req.body.password, user[0].password, (err, result) => {
                 if (err) {
-                    return status(401).json({
-                        status: 401,
+                    return status(404).json({
+                        status: 404,
                         message: "Email atau password salah!"
                     })
                 }
@@ -108,8 +108,8 @@ router.post('/login', (req, res) => {
                         data: user[0]
                     })
                 }
-                res.status(401).json({
-                    status: 401,
+                res.status(404).json({
+                    status: 404,
                     message: "Email atau password salah!"
                 })
             })
