@@ -142,7 +142,7 @@ router.patch('/:bengkelId', checkAuth, (req, res, next) => {
 
 router.get('/', checkAuth, (req, res) => {
     Bengkel.find()
-        .select('_id image_url nama_bengkel nama_pemilik email nomor_telp alamat location')
+        .select('_id created_at image_url nama_bengkel nama_pemilik email nomor_telp alamat location')
         .exec()
         .then(doc => {
             res.status(200).json({

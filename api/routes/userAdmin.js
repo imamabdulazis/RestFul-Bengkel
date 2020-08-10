@@ -204,6 +204,23 @@ router.patch('/image/:userId', multer.single('adminImage'), checkAuth, (req, res
 
 })
 
+router.get('/:userId', checkAuth, (req, res) => {
+    UserAdmin.findById(req.params.userId)
+        .select('_id image_url nama email')
+        .exec()
+        .then(doc => {
+            res.status(200).json({
+                status: 200,
+                data: doc
+            })
+        }).catch(err => {
+            res.status(500).json({
+                status: 200,
+                message: err
+            })
+        })
+})
+
 
 
 module.exports = router;
