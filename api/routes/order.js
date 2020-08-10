@@ -99,4 +99,29 @@ router.get('/bengkel/:bengkelId', (req, res, next) => {
         })
 })
 
+// user
+router.get('/user/:userId', (req, res, next) => {
+    Order.find({ user: req.params.userId })
+        .populate('user', 'nama nomor_telp')
+        .then(doc => {
+            if (_.isEmpty(doc)) {
+                res.status(404).json({
+                    status: 404,
+                    message: "Belum ada data booking!"
+                })
+            } else {
+                res.status(200).json({
+                    status: 200,
+                    data: doc
+                })
+            }
+        })
+        .catch(err => {
+            res.status(500).json({
+                status: 500,
+                message: err
+            })
+        })
+});
+
 module.exports = router;
