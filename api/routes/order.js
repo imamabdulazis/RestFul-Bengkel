@@ -3,11 +3,12 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Order = require('../models/order');
 const Produk = require('../models/produk');
+const _ = require('lodash');
 
 router.get('/', (req, res, next) => {
     Order.find()
-        .select('_id produk quantity')
-        .populate('produk', 'nama')
+        .select('_id nama_keluhan merk_motor nomor_telp')
+        .populate('bengkel', 'nama_bengkel nomor_telp')
         .exec()
         .then(doc => {
             res.status(200).json({
@@ -26,32 +27,27 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-    Produk.findById(req.body.produkId)
-        .then(produk => {
-            if (!produk) {
-                res.status(404).json({
-                    status: 404,
-                    message: "Produk tidak ditemukan"
-                })
-            }
-            const order = new Order({
-                _id: mongoose.Types.ObjectId(),
-                produk: req.body.produkId,
-                quantity: req.body.quantity,
-            })
-            return order.save()
-        })
+    const order = new Order({
+        _id: mongoose.Types.ObjectId(),
+        nama_keluhan: req.body.nama_keluhan,
+        merk_motor: req.body.merk_motor,
+        nomor_telp: req.body.nomor_telp,
+        user: req.body.userId,
+        bengkel: req.body.bengkelId,
+    })
+    order
+        .save()
         .then(result => {
-            console.log(result);
             res.status(200).json({
                 status: 200,
-                message: "Berhasil menambah pemesanan",
-                data: result
-            });
+                message: `Berhasil booking servis`
+            })
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({ status: 500, message: err });
+            res.status(500).json({
+                status: 500,
+                message: err
+            })
         })
 })
 
@@ -78,17 +74,22 @@ router.delete('/:orderId', (req, res, next) => {
         })
 
 })
-
-router.get('/:orderId', (req, res, next) => {
-    Order.findById(req.params.orderId)
-        .select('produk quantity _id')
-        .populate('produk')
-        .exec()
+// get servis by bengkel
+router.get('/bengkel/:bengkelId', (req, res, next) => {
+    Order.find({ bengkel: req.params.bengkelId })
+        .populate('bengkel', 'nama_bengkel')
         .then(doc => {
-            res.status(200).json({
-                status: 200,
-                data: doc
-            })
+            if (_.isEmpty(doc)) {
+                res.status(404).json({
+                    status: 404,
+                    message: "Belum ada data booking!"
+                })
+            } else {
+                res.status(200).json({
+                    status: 200,
+                    data: doc
+                })
+            }
         })
         .catch(err => {
             res.status(500).json({
@@ -97,6 +98,5 @@ router.get('/:orderId', (req, res, next) => {
             })
         })
 })
-
 
 module.exports = router;
