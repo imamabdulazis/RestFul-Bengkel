@@ -124,7 +124,7 @@ router.post('/login', (req, res) => {
 
 router.get('/', checkAuth, (req, res) => {
     User.find()
-        .select('_id image_url nama email nomor_telp alamat location')
+        .select('_id created_at image_url nama email nomor_telp alamat location')
         .exec()
         .then(doc => {
             res.status(200).json({

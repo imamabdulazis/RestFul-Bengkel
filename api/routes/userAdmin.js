@@ -120,7 +120,7 @@ router.post('/login', (req, res) => {
 
 router.get('/', checkAuth, (req, res) => {
     UserAdmin.find()
-        .select('_id image_url nama email')
+        .select('_id created_at image_url nama email')
         .exec()
         .then(doc => {
             res.status(200).json({
