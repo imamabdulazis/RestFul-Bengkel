@@ -23,10 +23,8 @@ const userSchema = mongoose.Schema({
     nomor_telp: { type: String, required: true },
     alamat: { type: String, required: true },
     password: { type: String, required: true },
-    location: {
-        type: pointSchema,
-        required: false
-    }
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true },
 })
 
 userSchema.pre('save', function (next) {

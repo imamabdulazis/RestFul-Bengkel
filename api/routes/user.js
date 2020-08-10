@@ -46,13 +46,8 @@ router.post('/signup', (req, res, next) => {
                             nomor_telp: req.body.nomor_telp,
                             alamat: req.body.alamat,
                             password: hash,
-                            location: {
-                                type: "Point",
-                                coordinates: [
-                                    parseFloat(req.body.latitude),
-                                    parseFloat(req.body.longitude),
-                                ]
-                            }
+                            latitude: req.body.latitude,
+                            longitude: req.body.longitude,
                         });
                         user
                             .save()
@@ -154,7 +149,8 @@ router.get('/:userId', checkAuth, (req, res) => {
                     email: doc.email,
                     nomor_telp: doc.nomor_telp,
                     alamat: doc.alamat,
-                    location: doc.location
+                    latitude: doc.latitude,
+                    longitude: doc.longitude,
                 }
             })
         }).catch(err => {
