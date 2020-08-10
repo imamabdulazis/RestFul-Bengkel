@@ -205,7 +205,6 @@ router.patch('/image/:bengkelId', multer.single('bengkelImage'), checkAuth, (req
                     res.status(200).json({
                         status: 200,
                         message: `Berhasil update image bengkel`,
-                        data: doc,
                     });
                 })
                 .catch(err => {

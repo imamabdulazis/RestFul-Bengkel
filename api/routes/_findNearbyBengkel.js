@@ -59,7 +59,7 @@ router.get('/:nama_bengkel', (req, res) => {
             if (doc.length > 0) {
                 res.status(200).json({
                     status: 200,
-                    data: doc
+                    data: doc[0]
                 })
             } else {
                 res.status(404).json({
