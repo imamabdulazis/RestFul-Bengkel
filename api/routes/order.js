@@ -7,7 +7,7 @@ const _ = require('lodash');
 
 router.get('/', (req, res, next) => {
     Order.find()
-        .select('_id nama_keluhan merk_motor nomor_telp')
+        .select('_id created_at nama_keluhan merk_motor nomor_telp')
         .populate('bengkel', 'nama_bengkel nomor_telp')
         .exec()
         .then(doc => {
