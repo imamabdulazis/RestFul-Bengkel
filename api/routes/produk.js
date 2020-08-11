@@ -67,12 +67,12 @@ router.post('/', multer.single('produkImage'), (req, res, next) => {
                     console.error(error);
                     res.status(500).json({ status: 500, message: err });
                 });
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    message: "Tidak ada gambar"
+                });
             }
-
-            res.status(500).json({
-                status: 500,
-                message: "Tidak ada gambar"
-            });
 
         })
         .then(result => {
