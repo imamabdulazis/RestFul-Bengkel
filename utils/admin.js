@@ -1,5 +1,5 @@
-const admin = require('firebase-admin');
-const serviceAccount = require('./service_account.json');
+var admin = require('firebase-admin');
+var serviceAccount = require('./service_account.json');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -7,4 +7,4 @@ admin.initializeApp({
     storageBucket: "bengkelta-8b68d.appspot.com",
 });
 
-module.exports = { admin };
+module.exports = admin;

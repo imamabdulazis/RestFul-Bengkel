@@ -4,10 +4,6 @@ const mongoose = require('mongoose');
 const Kategori = require('../models/kategori');
 const Produk = require('../models/produk');
 const Multer = require('multer');
-const checkAuth = require('../middleware/check-auth');
-const BusBoy = require('busboy');
-const { v4: uuid } = require('uuid');
-const { admin } = require('../../utils/admin');
 const { uploadImageToStorage } = require('../../utils/uploader');
 
 
@@ -18,7 +14,7 @@ const multer = Multer({
     // }
 });
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
     Produk.find()
         .select('nama harga stok bengkel kategori image_url _id')
         .populate('bengkel', 'nama_bengkel')
@@ -39,7 +35,7 @@ router.get('/', (req, res, next) => {
         })
 })
 
-router.post('/', multer.single('produkImage'), (req, res, next) => {
+router.post('/', multer.single('produkImage'), (req, res) => {
     Kategori.findById(req.body.kategoriId)
         .then(kategori => {
             if (!kategori) {
@@ -88,7 +84,7 @@ router.post('/', multer.single('produkImage'), (req, res, next) => {
         })
 })
 
-router.patch('/:produkId', (req, res, next) => {
+router.patch('/:produkId', (req, res) => {
     const id = req.params.produkId;
     const updateOps = {}
 
@@ -141,12 +137,12 @@ router.patch('/image/:produkId', multer.single('produkImage'), (req, res) => {
 
 })
 
-router.delete('/:produkId', (req, res, next) => {
+router.delete('/:produkId', (req, res) => {
     const id = req.params.produkId;
 
     Produk.remove({ _id: id })
         .exec()
-        .then(doc => {
+        .then(() => {
             res.status(200).json({
                 status: 200,
                 message: "Berhasil menghapus produk",
@@ -157,7 +153,7 @@ router.delete('/:produkId', (req, res, next) => {
         })
 })
 
-router.get('/:produkId', (req, res, next) => {
+router.get('/:produkId', (req, res) => {
     const id = req.params.produkId;
 
     Produk.findById(id)

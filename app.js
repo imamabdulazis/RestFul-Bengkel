@@ -3,7 +3,7 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
-const cors=require('cors');
+const cors = require('cors');
 
 mongoose.connect(
     'mongodb+srv://devopsimun:jsWvGiP3YBRN3AUa@belajar-mghf7.mongodb.net/Bengkel?retryWrites=true&w=majority', {
@@ -46,6 +46,12 @@ const userServisRoutes = require('./api/routes/_userServis');
 
 const findBengkel = require('./api/routes/_findNearbyBengkel');
 
+// notifikasi
+const notif = require('./utils/notification');
+const deviceUser = require('./api/routes/deviceuser');
+const notifikasi = require('./api/routes/notifikasi');
+// const notif = require('./utils/notification');
+
 
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
@@ -76,6 +82,11 @@ app.use('/user/servis', userServisRoutes);
 // find bengkel
 app.use('/findBengkel', findBengkel);
 
+
+// notif
+app.use('/notification', notif);
+app.use('/deviceUser', deviceUser);
+app.use('/notifikasi', notifikasi);
 
 
 app.use((req, res, next) => {
