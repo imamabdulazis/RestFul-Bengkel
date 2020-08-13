@@ -20,4 +20,4 @@ deviceBengkelSchema.pre('save', function (next) {
     next();
 })
 
-module.exports = mongoose.model('Device', deviceBengkelSchema);
+module.exports = mongoose.model('DeviceBengkel', deviceBengkelSchema);

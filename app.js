@@ -47,8 +47,10 @@ const userServisRoutes = require('./api/routes/_userServis');
 const findBengkel = require('./api/routes/_findNearbyBengkel');
 
 // notifikasi
+const deviceUser = require('./api/routes/deviceUser');
+const deviceBengkel = require('./api/routes/deviceBengkel');
+
 const notif = require('./utils/notification');
-const deviceUser = require('./api/routes/deviceuser');
 const notifikasi = require('./api/routes/notifikasi');
 // const notif = require('./utils/notification');
 
@@ -83,10 +85,13 @@ app.use('/user/servis', userServisRoutes);
 app.use('/findBengkel', findBengkel);
 
 
-// notif
-app.use('/notification', notif);
+// notifikasi
 app.use('/deviceUser', deviceUser);
+app.use('/deviceBengkel', deviceBengkel);
 app.use('/notifikasi', notifikasi);
+
+// test
+app.use('/notification', notif);
 
 
 app.use((req, res, next) => {
