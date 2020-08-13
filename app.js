@@ -53,6 +53,8 @@ const devBengkel = require('./api/routes/_deviceBengkel');
 const notifikasi = require('./api/routes/notifikasi');
 const notif = require('./utils/notification');
 
+const report = require('./api/routes/report');
+
 
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
@@ -83,14 +85,16 @@ app.use('/user/servis', userServisRoutes);
 // find bengkel
 app.use('/findBengkel', findBengkel);
 
-
 // notifikasi
 app.use('/deviceUser', devUser);
 app.use('/deviceBengkel', devBengkel);
 app.use('/notifikasi', notifikasi);
-
 // test
 app.use('/notification', notif);
+
+// report
+app.use('/report',report);
+
 
 
 app.use((req, res, next) => {
