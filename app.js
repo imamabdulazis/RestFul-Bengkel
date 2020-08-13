@@ -47,12 +47,11 @@ const userServisRoutes = require('./api/routes/_userServis');
 const findBengkel = require('./api/routes/_findNearbyBengkel');
 
 // notifikasi
-const deviceUser = require('./api/routes/deviceUser');
-const deviceBengkel = require('./api/routes/deviceBengkel');
+const devUser = require('./api/routes/deviceUser');
+const devBengkel = require('./api/routes/deviceBengkel');
 
-const notif = require('./utils/notification');
 const notifikasi = require('./api/routes/notifikasi');
-// const notif = require('./utils/notification');
+const notif = require('./utils/notification');
 
 
 app.use(morgan("dev"));
@@ -86,8 +85,8 @@ app.use('/findBengkel', findBengkel);
 
 
 // notifikasi
-app.use('/deviceUser', deviceUser);
-app.use('/deviceBengkel', deviceBengkel);
+app.use('/deviceUser', devUser);
+app.use('/deviceBengkel', devBengkel);
 app.use('/notifikasi', notifikasi);
 
 // test
