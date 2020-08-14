@@ -6,11 +6,13 @@ const servisSchema = mongoose.Schema({
     updated_at: { type: Date },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
     bengkel: { type: mongoose.Schema.Types.ObjectId, ref: 'Bengkel', require: true },
-    produk: { type: mongoose.Schema.Types.ObjectId, ref: 'Produk', require: true },
+    produk: { type: mongoose.Schema.Types.ObjectId, ref: 'Produk' },
     jumlah_produk: { type: Number, default: 1 },
     jenis_servis: String,
+    merk_motor: String,
+    keterangan_user: String,
+    keterangan_bengkel: String,
     biaya_servis: Number,
-    keterangan: String,
 
 })
 

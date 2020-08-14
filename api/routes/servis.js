@@ -28,37 +28,31 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-    Produk.findById(req.body.produkId)
-        .then(produk => {
-            if (!produk) {
-                res.status(404).json({
-                    status: 404,
-                    message: "Produk tidak ditemukan"
-                })
-            }
-            const servis = new Servis({
-                _id: mongoose.Types.ObjectId(),
-                created_at: new Date().toISOString(),
-                user: req.body.userId,
-                bengkel: req.body.bengkelId,
-                produk: req.body.produkId,
-                jumlah_produk: req.body.jumlah_produk,
-                jenis_servis: req.body.jenis_servis,
-                biaya_servis: req.body.biaya_servis,
-                keterangan: req.body.keterangan,
-            })
-            return servis.save()
-        })
+    const servis = new Servis({
+        _id: mongoose.Types.ObjectId(),
+        user: req.body.userId,
+        bengkel: req.body.bengkelId,
+        produk: req.body.produkId,
+        jumlah_produk: req.body.jumlah_produk,
+        jenis_servis: req.body.jenis_servis,
+        merk_motor: req.body.merk_motor,
+        biaya_servis: req.body.biaya_servis,
+        keterangan_user: req.body.keterangan_user,
+        keterangan_bengkel: req.body.keterangan_bengkel,
+    })
+    servis
+        .save()
         .then(result => {
             res.status(200).json({
                 status: 200,
-                message: "Berhasil menambah servis",
-                data: result
-            });
+                message: `Berhasil simpan servis`
+            })
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({ status: 500, message: err });
+            res.status(500).json({
+                status: 500,
+                message: err
+            })
         })
 })
 
