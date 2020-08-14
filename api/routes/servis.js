@@ -2,11 +2,9 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Servis = require('../models/servis');
-const Produk = require('../models/produk');
 
 router.get('/', (req, res, next) => {
     Servis.find()
-        .select('_id created_at jumlah_produk jenis_servis total_bayar keterangan')
         .populate('produk', 'nama')
         .populate('bengkel', 'nama_bengkel nomor_telp')
         .populate('user', 'nama email nomor_telp alamat')
@@ -69,8 +67,7 @@ router.patch('/:servisId', (req, res, next) => {
         .then(doc => {
             res.status(200).json({
                 status: 200,
-                message: `Berhasil update data servis`,
-                data: doc,
+                message: `Berhasil update data servis`
             });
         })
         .catch(err => {
