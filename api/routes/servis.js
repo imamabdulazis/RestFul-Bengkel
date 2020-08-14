@@ -34,6 +34,7 @@ router.post('/', (req, res, next) => {
         jumlah_produk: req.body.jumlah_produk,
         jenis_servis: req.body.jenis_servis,
         merk_motor: req.body.merk_motor,
+        nomor_telp: req.body.nomor_telp,
         biaya_servis: req.body.biaya_servis,
         keterangan_user: req.body.keterangan_user,
         keterangan_bengkel: req.body.keterangan_bengkel,

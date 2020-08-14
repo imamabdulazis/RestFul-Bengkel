@@ -9,6 +9,7 @@ const servisSchema = mongoose.Schema({
     produk: { type: mongoose.Schema.Types.ObjectId, ref: 'Produk' },
     jumlah_produk: { type: Number, default: 1 },
     jenis_servis: String,
+    nomor_telp: String,
     merk_motor: String,
     keterangan_user: String,
     keterangan_bengkel: String,
