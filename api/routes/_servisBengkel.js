@@ -11,7 +11,12 @@ router.get('/:bengkelId', (req, res) => {
         .populate('user', 'nama email alamat')
         .populate('produk', 'nama harga')
         .then(doc => {
-            if (_.isEmpty(doc)) {
+            var newArray = doc.filter(function (el) {
+                if (el.isService == false) {
+                    return el;
+                }
+            })
+            if (_.isEmpty(newArray)) {
                 res.status(404).json({
                     status: 404,
                     message: "Belum ada data servis!"
@@ -19,7 +24,7 @@ router.get('/:bengkelId', (req, res) => {
             } else {
                 res.status(200).json({
                     status: 200,
-                    data: doc
+                    data: newArray
                 })
             }
         })
