@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Multer = require('multer');
-const checkAuth = require('../middleware/check-auth');
 const _ = require('lodash');
 
 const User = require('../models/user');
@@ -117,7 +116,7 @@ router.post('/login', (req, res) => {
         });
 })
 
-router.get('/', checkAuth, (req, res) => {
+router.get('/', (req, res) => {
     User.find()
         .select('_id created_at image_url nama email nomor_telp alamat location')
         .exec()
@@ -135,7 +134,7 @@ router.get('/', checkAuth, (req, res) => {
         })
 })
 
-router.get('/:userId', checkAuth, (req, res) => {
+router.get('/:userId', (req, res) => {
     User.findById(req.params.userId)
         .select('_id image_url nama email nomor_telp alamat location')
         .exec()
@@ -199,7 +198,7 @@ router.delete('/:userId', (req, res) => {
         })
 })
 
-router.patch('/image/:userId', multer.single('userImage'), checkAuth, (req, res) => {
+router.patch('/image/:userId', multer.single('userImage'), (req, res) => {
     const id = req.params.userId;
 
     let file = req.file;
