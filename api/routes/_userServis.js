@@ -14,7 +14,7 @@ router.get('/:userId', (req, res) => {
             if (_.isEmpty(doc)) {
                 res.status(404).json({
                     status: 404,
-                    message: "Belum ada data servis!"
+                    message: "Belum ada data servis!",
                 })
             } else {
                 var newArray = doc.filter(function (el) {
@@ -24,7 +24,6 @@ router.get('/:userId', (req, res) => {
                 })
                 res.status(200).json({
                     status: 200,
-                    message: "Data service belum ada",
                     data: newArray[0],
                 })
             }
@@ -72,6 +71,5 @@ router.delete('/:servisId', checkAuth, (req, res, next) => {
             res.status(500).json({ status: 500, message: err });
         })
 })
-
 
 module.exports = router;

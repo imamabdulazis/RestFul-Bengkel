@@ -40,20 +40,35 @@ router.post('/', (req, res, next) => {
         keterangan_user: req.body.keterangan_user,
         keterangan_bengkel: req.body.keterangan_bengkel,
         isService: _.isEmpty(req.body.keterangan_bengkel) ? false : true,
-    })
-    servis
-        .save()
-        .then(result => {
-            res.status(200).json({
-                status: 200,
-                message: `Berhasil simpan servis`
+    });
+
+    Servis.find({ user: req.body.userId })
+        .then((result) => {
+            var newArray = result.filter(function (el) {
+                if (el.isService == false);
+                return el;
             })
-        })
-        .catch(err => {
-            res.status(500).json({
-                status: 500,
-                message: err
-            })
+            if (newArray.length > 0) {
+                return res.status(409).json({
+                    status: 409,
+                    message: "Anda masih memiliki status servis aktif"
+                })
+            } else {
+                return servis
+                    .save()
+                    .then(() => {
+                        res.status(200).json({
+                            status: 200,
+                            message: `Berhasil simpan servis`
+                        })
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            status: 500,
+                            message: err
+                        })
+                    })
+            }
         })
 })
 
