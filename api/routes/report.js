@@ -155,15 +155,10 @@ router.get('/user/:userId', (req, res, next) => {
 });
 
 // delete riwayat user
-router.patch('/user/delete/:reportId', (req, res) => {
+router.put('/user/delete/:reportId', (req, res) => {
     const id = req.params.reportId;
-    const updateOps = {}
 
-    for (const ops of req.body) {
-        updateOps[ops.propName] = ops.value;
-    }
-
-    Report.update({ _id: id }, { $set: updateOps })
+    Report.update({ _id: id }, { $set: { isDeleteUser: req.body.isDeleteUser } })
         .exec()
         .then(doc => {
             res.status(200).json({
