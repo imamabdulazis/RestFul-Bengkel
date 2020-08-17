@@ -45,9 +45,10 @@ router.post('/', (req, res, next) => {
     Servis.find({ user: req.body.userId })
         .then((result) => {
             var newArray = result.filter(function (el) {
-                if (el.isService == false);
-                return el;
-            })
+                if (el.isService === false) {
+                    return el;
+                }
+            });
             if (newArray.length > 0) {
                 return res.status(409).json({
                     status: 409,

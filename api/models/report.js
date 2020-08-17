@@ -10,6 +10,7 @@ const reportSchema = mongoose.Schema({
     bengkel: { type: mongoose.Schema.Types.ObjectId, ref: 'Bengkel', require: true },
     keterangan: { type: String, required: true },
     total_harga: { type: String, required: true },
+    isDeleteUser: Boolean,
 })
 
 reportSchema.pre('save', function (next) {

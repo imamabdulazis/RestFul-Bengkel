@@ -50,6 +50,7 @@ router.post('/', (req, res, next) => {
                 bengkel: req.body.id_bengkel,
                 keterangan: req.body.keterangan,
                 total_harga: req.body.total,
+                isDeleteUser: false,
             })
             return Servis.update({ _id: newArray[0]._id }, { $set: { isService: true, keterangan_bengkel: req.body.keterangan } })
                 .then(() => {
