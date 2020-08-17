@@ -129,7 +129,12 @@ router.get('/user/:userId', (req, res, next) => {
         .populate('user', 'nama')
         .populate('bengkel', 'nama_bengkel')
         .then(doc => {
-            if (_.isEmpty(doc)) {
+            var newArray = doc.filter(function (el) {
+                if (el.isDeleteUser == false) {
+                    return el;
+                }
+            })
+            if (_.isEmpty(newArray)) {
                 res.status(404).json({
                     status: 404,
                     message: "Belum ada data report!"
@@ -137,7 +142,7 @@ router.get('/user/:userId', (req, res, next) => {
             } else {
                 res.status(200).json({
                     status: 200,
-                    data: doc
+                    data: newArray
                 })
             }
         })
@@ -148,5 +153,27 @@ router.get('/user/:userId', (req, res, next) => {
             })
         })
 });
+
+// delete riwayat user
+router.patch('/user/delete/:reportId', (req, res) => {
+    const id = req.params.reportId;
+    const updateOps = {}
+
+    for (const ops of req.body) {
+        updateOps[ops.propName] = ops.value;
+    }
+
+    Report.update({ _id: id }, { $set: updateOps })
+        .exec()
+        .then(doc => {
+            res.status(200).json({
+                status: 200,
+                message: `Berhasil hapus riwayat`,
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ status: 500, message: err });
+        })
+})
 
 module.exports = router;
