@@ -47,7 +47,14 @@ router.post('/', (req, res, next) => {
                         res.status(500).json({ status: 500, message: err });
                     })
             } else {
-                return DeviceUser.update({ _id: result[0]._id }, { $set: { fcm_token: req.body.fcm_token } })
+                return DeviceUser.update({ _id: result[0]._id }, {
+                    $set: {
+                        fcm_token: req.body.fcm_token,
+                        systemName: req.body.systemName,
+                        systemVersion: req.body.systemVersion,
+                        getManufacturer: req.body.getManufacturer,
+                    }
+                })
                     .exec()
                     .then(doc => {
                         res.status(200).json({
