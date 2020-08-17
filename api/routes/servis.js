@@ -31,7 +31,7 @@ router.post('/', (req, res, next) => {
         _id: mongoose.Types.ObjectId(),
         user: req.body.userId,
         bengkel: req.body.bengkelId,
-        produk: req.body.produkId,
+        produk: null,
         jumlah_produk: req.body.jumlah_produk,
         jenis_servis: req.body.jenis_servis,
         merk_motor: req.body.merk_motor,

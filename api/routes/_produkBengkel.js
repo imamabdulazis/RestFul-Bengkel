@@ -18,8 +18,8 @@ router.get('/:bengkelId', (req, res) => {
             } else {
                 res.status(200).json({
                     status: 200,
-                    jumlah:doc.length,
-                    data: doc
+                    jumlah: doc.length,
+                    data: doc,
                 })
             }
         })

@@ -52,7 +52,14 @@ router.post('/', (req, res, next) => {
                 total_harga: req.body.total,
                 isDeleteUser: false,
             })
-            return Servis.update({ _id: newArray[0]._id }, { $set: { isService: true, keterangan_bengkel: req.body.keterangan } })
+            return Servis.update({ _id: newArray[0]._id }, {
+                $set: {
+                    isService: true,
+                    keterangan_bengkel: req.body.keterangan,
+                    produk: _.isEmpty(req.body.id_produk) ? null : req.body.id_produk,
+                    jumlah_produk: 1,
+                }
+            })
                 .then(() => {
                     return report.save().then(() => {
                         res.status(200).json({

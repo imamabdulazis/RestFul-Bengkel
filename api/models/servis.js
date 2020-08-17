@@ -7,7 +7,7 @@ const servisSchema = mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
     bengkel: { type: mongoose.Schema.Types.ObjectId, ref: 'Bengkel', require: true },
     produk: { type: mongoose.Schema.Types.ObjectId, ref: 'Produk' },
-    jumlah_produk: { type: Number, default: 1 },
+    jumlah_produk: { type: Number, default: 0 },
     jenis_servis: String,
     nomor_telp: String,
     merk_motor: String,
