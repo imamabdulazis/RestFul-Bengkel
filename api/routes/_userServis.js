@@ -17,9 +17,15 @@ router.get('/:userId', (req, res) => {
                     message: "Belum ada data servis!"
                 })
             } else {
+                var newArray = doc.filter(function (el) {
+                    if (el.isService == false) {
+                        return el;
+                    }
+                })
                 res.status(200).json({
                     status: 200,
-                    data: doc
+                    message: "Data service belum ada",
+                    data: newArray[0],
                 })
             }
         })

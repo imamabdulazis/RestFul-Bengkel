@@ -42,7 +42,6 @@ router.post('/', (req, res, next) => {
             return kategori.save()
         })
         .then(result => {
-            console.log(result);
             res.status(200).json({
                 status: 200,
                 message: "Berhasil menambah kategori!",

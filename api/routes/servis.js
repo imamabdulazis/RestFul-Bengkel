@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Servis = require('../models/servis');
+const _ = require('lodash');
 
 router.get('/', (req, res, next) => {
     Servis.find()
@@ -38,6 +39,7 @@ router.post('/', (req, res, next) => {
         biaya_servis: req.body.biaya_servis,
         keterangan_user: req.body.keterangan_user,
         keterangan_bengkel: req.body.keterangan_bengkel,
+        isService: _.isEmpty(req.body.keterangan_bengkel) ? false : true,
     })
     servis
         .save()

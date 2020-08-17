@@ -14,6 +14,7 @@ const servisSchema = mongoose.Schema({
     keterangan_user: String,
     keterangan_bengkel: String,
     biaya_servis: Number,
+    isService: Boolean,
 
 })
 
