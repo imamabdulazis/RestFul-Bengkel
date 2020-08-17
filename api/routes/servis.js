@@ -39,7 +39,7 @@ router.post('/', (req, res, next) => {
         biaya_servis: req.body.biaya_servis,
         keterangan_user: req.body.keterangan_user,
         keterangan_bengkel: req.body.keterangan_bengkel,
-        isService: _.isEmpty(req.body.keterangan_bengkel) ? false : true,
+        isService: false,
     });
 
     Servis.find({ user: req.body.userId })
