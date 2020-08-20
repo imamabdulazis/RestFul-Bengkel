@@ -55,6 +55,8 @@ const notif = require('./utils/notification');
 
 const report = require('./api/routes/report');
 
+const antrian = require('./api/routes/antrian');
+
 
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
@@ -93,8 +95,11 @@ app.use('/notifikasi', notifikasi);
 app.use('/notification', notif);
 
 // report
-app.use('/report',report);
+app.use('/report', report);
 
+
+// antrian
+app.use('/antrian', antrian);
 
 
 app.use((req, res, next) => {

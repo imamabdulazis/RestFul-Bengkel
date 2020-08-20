@@ -11,17 +11,17 @@ router.get('/:userId', (req, res) => {
         .populate('bengkel', 'nama_bengkel nomor_telp')
         .populate('produk', 'nama harga')
         .then(doc => {
-            if (_.isEmpty(doc)) {
+            var newArray = doc.filter(function (el) {
+                if (el.isService == false) {
+                    return el;
+                }
+            })
+            if (_.isEmpty(newArray)) {
                 res.status(404).json({
                     status: 404,
                     message: "Belum ada data servis!",
                 })
             } else {
-                var newArray = doc.filter(function (el) {
-                    if (el.isService == false) {
-                        return el;
-                    }
-                })
                 res.status(200).json({
                     status: 200,
                     data: newArray[0],

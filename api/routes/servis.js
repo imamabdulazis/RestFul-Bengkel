@@ -117,4 +117,24 @@ router.delete('/:servisId', (req, res, next) => {
         })
 })
 
+
+function createAntrian(result, user_id) {
+    var newArray = result.filter(function (el) {
+        if (el.isService === false) {
+            return el;
+        }
+    });
+
+    if (_.isEmpty(newArray)) {
+
+    } else {
+        let nomor = newArray.findIndex(x => x.user == user_id);
+        const antrian = new Antrian({
+            _id: mongoose.Types.ObjectId(),
+            nomor_antrian: nomor + 1
+        })
+        return antrian.save();
+    }
+}
+
 module.exports = router;
