@@ -158,7 +158,7 @@ router.get('/', checkAuth, (req, res) => {
         })
 })
 
-router.get('/:bengkelId', checkAuth, (req, res) => {
+router.get('/:bengkelId', (req, res) => {
     Bengkel.findById(req.params.bengkelId)
         .select('_id image_url nama_bengkel nama_pemilik email nomor_telp alamat location')
         .exec()
@@ -175,7 +175,7 @@ router.get('/:bengkelId', checkAuth, (req, res) => {
         })
 })
 
-router.delete('/:bengkelId', checkAuth, (req, res) => {
+router.delete('/:bengkelId', (req, res) => {
     Bengkel.remove({ _id: req.params.bengkelId })
         .exec()
         .then(result => {
@@ -193,7 +193,7 @@ router.delete('/:bengkelId', checkAuth, (req, res) => {
 })
 
 // update foto profil bengkel
-router.patch('/image/:bengkelId', multer.single('bengkelImage'), checkAuth, (req, res) => {
+router.patch('/image/:bengkelId', multer.single('bengkelImage'), (req, res) => {
     const id = req.params.bengkelId;
 
     let file = req.file;
