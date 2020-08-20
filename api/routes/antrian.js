@@ -32,8 +32,10 @@ router.get('/', (req, res) => {
                     res.status(200).json({
                         status: 200,
                         message: `Anda antrian nomor ${nomor}`,
-                        jml_antrian: newArray.length,
-                        nomor_antrian: nomor + 1,
+                        data: {
+                            jml_antrian: newArray.length,
+                            nomor_antrian: nomor + 1,
+                        }
                     })
                 }
             }
