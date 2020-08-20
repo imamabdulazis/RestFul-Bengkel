@@ -7,7 +7,7 @@ const _ = require('lodash');
 
 
 
-router.get('/', (req, res) => {
+router.post('/', (req, res) => {
     Servis.find({ bengkel: req.body.bengkel_id })
         .then((result) => {
             var newArray = result.filter(function (el) {
@@ -31,7 +31,7 @@ router.get('/', (req, res) => {
                 } else {
                     res.status(200).json({
                         status: 200,
-                        message: `Anda antrian nomor ${nomor}`,
+                        message: `Anda antrian nomor ${nomor + 1}`,
                         data: {
                             jml_antrian: newArray.length,
                             nomor_antrian: nomor + 1,
