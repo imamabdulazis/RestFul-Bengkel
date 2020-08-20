@@ -8,7 +8,7 @@ const checkAuth = require('../middleware/check-auth');
 router.get('/:userId', (req, res) => {
     Servis.find({ user: req.params.userId })
         .populate('user', 'nama email alamat')
-        .populate('bengkel', 'nama_bengkel nomor_telp')
+        .populate('bengkel', 'nama_bengkel nomor_telp alamat')
         .populate('produk', 'nama harga')
         .then(doc => {
             var newArray = doc.filter(function (el) {
