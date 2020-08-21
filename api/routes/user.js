@@ -78,7 +78,6 @@ router.post('/login', (req, res) => {
                     message: "Email tidak ditemukan!"
                 })
             }
-
             bcrypt.compare(req.body.password, user[0].password, (err, result) => {
                 if (err) {
                     return status(404).json({
@@ -226,6 +225,55 @@ router.patch('/image/:userId', multer.single('userImage'), (req, res) => {
         });
     }
 
+})
+
+router.put('/reset-password', (req, res) => {
+    if (req.body.new_password != req.body.con_password) {
+        res.status(409).json({
+            status: 409,
+            message: "Password tidak sama!"
+        })
+    } else {
+        User.find({ email: req.body.email })
+            .exec()
+            .then(user => {
+                if (user.length < 1) {
+                    res.status(404).json({
+                        status: 404,
+                        message: "Email tidak ditemukan."
+                    })
+                } else {
+                    bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+                        if (err) {
+                            return status(404).json({
+                                status: 404,
+                                message: "Email atau password salah!"
+                            })
+                        }
+                        if (result) {
+                            bcrypt.hash(req.body.new_password, 10, (err, hash) => {
+                                User.update({ _id: user[0]._id }, { $set: { password: hash } })
+                                    .exec()
+                                    .then(doc => {
+                                        res.status(200).json({
+                                            status: 200,
+                                            message: "Berhasil ubah password"
+                                        })
+                                    })
+                                    .catch(err => {
+                                        res.status(500).json({ status: 500, message: err });
+                                    })
+                            })
+                        } else {
+                            res.status(404).json({
+                                status: 404,
+                                message: "Email atau password salah!"
+                            })
+                        }
+                    })
+                }
+            });
+    }
 })
 
 module.exports = router;
