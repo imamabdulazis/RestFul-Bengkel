@@ -5,7 +5,7 @@ const Report = require('../models/report');
 const Servis = require('./../models/servis');
 const _ = require('lodash');
 const moment = require('moment');
-const { populate } = require('../models/report');
+const Produk = require('../models/produk');
 
 router.get('/', (req, res, next) => {
     Report.find()
@@ -52,24 +52,59 @@ router.post('/', (req, res, next) => {
                 total_harga: req.body.total,
                 isDeleteUser: false,
             })
-            return Servis.update({ _id: newArray[0]._id }, {
-                $set: {
-                    isService: true,
-                    keterangan_bengkel: req.body.keterangan,
-                    produk: _.isEmpty(req.body.id_produk) ? null : req.body.id_produk,
-                    jumlah_produk: 1,
-                }
-            })
-                .then(() => {
+            if (req.body.id_produk) {
+                Produk.findById(req.body.id_produk)
+                    .then((result) => {
+                        if (result.stok < 1) {
+                            res.status(404).json({
+                                status: 404,
+                                message: "Produk sedang kosong"
+                            })
+                        } else {
+                            return Produk.update({ _id: req.body.id_produk }, {
+                                $set: { stok: result.stok - 1 }
+                            }).then(() => {
+                                Servis.update({ _id: newArray[0]._id }, {
+                                    $set: {
+                                        isService: true,
+                                        keterangan_bengkel: req.body.keterangan,
+                                        produk: req.body.id_produk,
+                                        jumlah_produk: 1,
+                                    }
+                                }).then(() => {
+                                    return report.save().then(() => {
+                                        res.status(200).json({
+                                            status: 200,
+                                            message: `Berhasil simpan report`
+                                        })
+                                    })
+                                }).catch(err => {
+                                    res.status(500).json({
+                                        status: 500,
+                                        message: err
+                                    })
+                                })
+                            }).catch(err => {
+                                res.status(500).json({
+                                    status: 500,
+                                    message: err
+                                })
+                            })
+                        }
+                    })
+            } else {
+                Servis.update({ _id: newArray[0]._id }, {
+                    $set: {
+                        isService: true,
+                        keterangan_bengkel: req.body.keterangan,
+                        produk: null,
+                        jumlah_produk: 1,
+                    }
+                }).then(() => {
                     return report.save().then(() => {
                         res.status(200).json({
                             status: 200,
                             message: `Berhasil simpan report`
-                        })
-                    }).catch(err => {
-                        res.status(500).json({
-                            status: 500,
-                            message: err
                         })
                     })
                 }).catch(err => {
@@ -78,6 +113,7 @@ router.post('/', (req, res, next) => {
                         message: err
                     })
                 })
+            }
         })
 })
 
@@ -175,6 +211,45 @@ router.put('/user/delete/:reportId', (req, res) => {
         })
         .catch(err => {
             res.status(500).json({ status: 500, message: err });
+        })
+});
+
+// get report form date to date
+router.post('/bengkel/date', (req, res) => {
+    Report.find({ bengkel: req.body.id_bengkel })
+        .exec()
+        .then((result) => {
+            if (result.length < 1) {
+                return res.status(200).json({
+                    status: 404,
+                    message: "Belum ada data laporan"
+                })
+            } else {
+                Report.find({
+                    created_at: {
+                        $gte: req.body.from_date,//from date
+                        $lt: req.body.to_date//to date
+                    }
+                }).exec()
+                    .then((result) => {
+                        if (result.length < 1) {
+                            return res.status(404).json({
+                                status: 404,
+                                message: "Belum ada data laporan"
+                            })
+                        } else {
+                            res.status(200).json({
+                                status: 200,
+                                data: result
+                            })
+                        }
+                    })
+            }
+        }).catch((err) => {
+            res.status(500).json({
+                status: 500,
+                message: err
+            })
         })
 })
 
