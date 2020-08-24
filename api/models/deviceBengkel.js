@@ -12,7 +12,7 @@ const deviceBengkelSchema = mongoose.Schema({
 })
 
 deviceBengkelSchema.pre('save', function (next) {
-    now = new Date();
+    now = new Date().toISOString()
     this.updated_at = now;
     if (!this.created_at) {
         this.created_at = now;

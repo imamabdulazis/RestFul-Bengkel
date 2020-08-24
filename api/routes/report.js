@@ -226,12 +226,13 @@ router.post('/bengkel/date', (req, res) => {
                 })
             } else {
                 Report.find({
-                    created_at: {
-                        $gte: req.body.from_date,//from date
-                        $lt: req.body.to_date//to date
+                    updated_at: {
+                        $gte: ISODate(req.body.from_date),//from date
+                        $lt: ISODate(req.body.to_date)//to date
                     }
                 }).exec()
                     .then((result) => {
+                        console.log(result);
                         if (result.length < 1) {
                             return res.status(404).json({
                                 status: 404,
