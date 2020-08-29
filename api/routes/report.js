@@ -230,7 +230,10 @@ router.post('/bengkel/date', (req, res) => {
                         $gte: new Date(req.body.from_date),//from date
                         $lt: new Date(req.body.to_date)//to date
                     }
-                }).exec()
+                })
+                    .select('_id no_transaksi updated_at user keterangan total_harga ')
+                    .populate('user','email')
+                    .exec()
                     .then((result) => {
                         if (result.length < 1) {
                             return res.status(404).json({
