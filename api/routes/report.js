@@ -263,8 +263,9 @@ router.post('/bengkel/date', (req, res) => {
         })
 })
 
-router.post('/bengkel/download', multer.single('pdf'), (req, res) => {
+router.patch('/bengkel/download', multer.single('pdfFile'), (req, res) => {
     let file = req.file;
+    console.log(file);
     if (file) {
         uploadImageToStorage(file).then((success) => {
             return res.status(200).json({
@@ -272,6 +273,7 @@ router.post('/bengkel/download', multer.single('pdf'), (req, res) => {
                 url: success
             })
         }).catch((error) => {
+            console.log(error);
             res.status(500).json({ status: 500, message: err });
         });
     }
