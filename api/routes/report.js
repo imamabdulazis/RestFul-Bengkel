@@ -7,6 +7,13 @@ const _ = require('lodash');
 const moment = require('moment');
 const Produk = require('../models/produk');
 
+const Multer = require('multer');
+const { uploadImageToStorage } = require('../../utils/uploader');
+
+const multer = Multer({
+    storage: Multer.memoryStorage()
+});
+
 router.get('/', (req, res, next) => {
     Report.find()
         .select('_id no_transaksi keterangan total_harga')
@@ -232,7 +239,7 @@ router.post('/bengkel/date', (req, res) => {
                     }
                 })
                     .select('_id no_transaksi updated_at user keterangan total_harga ')
-                    .populate('user','email')
+                    .populate('user', 'email')
                     .exec()
                     .then((result) => {
                         if (result.length < 1) {
@@ -255,5 +262,20 @@ router.post('/bengkel/date', (req, res) => {
             })
         })
 })
+
+router.post('/bengkel/download', multer.single('pdf'), (req, res) => {
+    let file = req.file;
+    if (file) {
+        uploadImageToStorage(file).then((success) => {
+            return res.status(200).json({
+                status: 200,
+                url: success
+            })
+        }).catch((error) => {
+            res.status(500).json({ status: 500, message: err });
+        });
+    }
+})
+
 
 module.exports = router;
