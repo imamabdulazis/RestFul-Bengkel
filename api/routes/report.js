@@ -228,6 +228,7 @@ router.post('/bengkel/date', (req, res) => {
         .exec()
         .then((result) => {
             if (result.length < 1) {
+                console.log(result)
                 return res.status(200).json({
                     status: 404,
                     message: "Belum ada data laporan"
@@ -241,6 +242,7 @@ router.post('/bengkel/date', (req, res) => {
                 })
                     .select('_id no_transaksi updated_at user keterangan total_harga ')
                     .populate('user', 'email')
+                    .populate('bengkel', '_id')
                     .exec()
                     .then((result) => {
                         if (result.length < 1) {
@@ -249,11 +251,29 @@ router.post('/bengkel/date', (req, res) => {
                                 message: "Belum ada data laporan"
                             })
                         } else {
-                            res.status(200).json({
-                                status: 200,
-                                data: result
-                            })
+                            var newArray = result.filter(function (el) {
+                                if (el.bengkel._id == req.body.id_bengkel) {
+                                    return el;
+                                }
+                            });
+                            if (_.isEmpty(newArray)) {
+                                return res.status(404).json({
+                                    status: 404,
+                                    message: "Belum ada data laporan"
+                                })
+                            } else {
+                                return res.status(200).json({
+                                    status: 200,
+                                    data: result
+                                });
+                            }
                         }
+                    }).catch((err) => {
+                        console.log(err);
+                        res.status(500).json({
+                            status: 500,
+                            message: err
+                        })
                     })
             }
         }).catch((err) => {
