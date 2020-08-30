@@ -176,6 +176,7 @@ router.get('/bengkel/:bengkelId', (req, res, next) => {
 // get riwayt user
 router.get('/user/:userId', (req, res, next) => {
     Report.find({ user: req.params.userId })
+        .sort({ 'updated_at': "desc" })
         .populate('user', 'nama')
         .populate('bengkel', 'nama_bengkel')
         .then(doc => {
