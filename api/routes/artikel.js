@@ -12,6 +12,7 @@ const multer = Multer({
 
 router.get('/', (req, res, next) => {
     Artikel.find()
+        .sort({ 'updated_at': "desc" })
         .select('_id image_url title content created_at updated_at')
         .exec()
         .then(doc => {
@@ -172,5 +173,39 @@ router.patch('/image/:artikelId', multer.single('artikelImage'), checkAuth, (req
 
 })
 
+// get home artikel
+router.get('/content/home', (req, res) => {
+    Artikel.find({}, ['type', 'updated_at'],
+        {
+            skip: 0,
+            limit: 3,
+            sort: {
+                updated_at: -1
+            }
+        })
+        .select('_id image_url title content created_at updated_at')
+        .exec()
+        .then(doc => {
+            if (doc.length < 1) {
+                res.status(404).json({
+                    status: 404,
+                    message: 'Data artikel tidak ada!',
+                });
+            } else {
+                res.status(200).json({
+                    status: 200,
+                    message: 'Berhasil retrieve data artikel',
+                    jumlah: doc.length,
+                    data: doc
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({
+                status: 500,
+                message: err
+            })
+        })
+})
 
 module.exports = router;
