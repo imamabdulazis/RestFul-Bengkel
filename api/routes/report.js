@@ -228,7 +228,6 @@ router.post('/bengkel/date', (req, res) => {
         .exec()
         .then((result) => {
             if (result.length < 1) {
-                console.log(result)
                 return res.status(200).json({
                     status: 404,
                     message: "Belum ada data laporan"
@@ -255,18 +254,11 @@ router.post('/bengkel/date', (req, res) => {
                                 if (el.bengkel._id == req.body.id_bengkel) {
                                     return el;
                                 }
+                            })
+                            return res.status(200).json({
+                                status: 200,
+                                data: newArray
                             });
-                            if (_.isEmpty(newArray)) {
-                                return res.status(404).json({
-                                    status: 404,
-                                    message: "Belum ada data laporan"
-                                })
-                            } else {
-                                return res.status(200).json({
-                                    status: 200,
-                                    data: result
-                                });
-                            }
                         }
                     }).catch((err) => {
                         console.log(err);
