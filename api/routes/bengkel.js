@@ -28,43 +28,60 @@ router.post('/signup', (req, res) => {
                     message: "Nama Bengkel Telah Dipakai!"
                 })
             } else {
-                bcrypt.hash(req.body.password, 10, (err, hash) => {
-                    if (err) {
-                        return res.status(500).json({
+                Bengkel.find({ email: req.body.email })
+                    .exec()
+                    .then(email => {
+                        if (email.length >= 1) {
+                            return res.status(409).json({
+                                status: 409,
+                                message: "Email Telah Dipakai!"
+                            })
+                        } else {
+                            bcrypt.hash(req.body.password, 10, (err, hash) => {
+                                if (err) {
+                                    return res.status(500).json({
+                                        status: 500,
+                                        message: err
+                                    })
+                                } else {
+                                    let generatedToken = uuid();
+                                    const bengkel = new Bengkel({
+                                        _id: mongoose.Types.ObjectId(),
+                                        image_url: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/bengkel.png?alt=media&token=${generatedToken}`,
+                                        nama_bengkel: req.body.nama_bengkel,
+                                        nama_pemilik: req.body.nama_pemilik,
+                                        email: req.body.email,
+                                        nomor_telp: req.body.nomor_telp,
+                                        alamat: req.body.alamat,
+                                        password: hash,
+                                        latitude: req.body.latitude,
+                                        longitude: req.body.longitude,
+                                    });
+                                    bengkel
+                                        .save()
+                                        .then(result => {
+                                            res.status(200).json({
+                                                status: 200,
+                                                message: `Berhasil mendaftar bengkel ${req.body.nama_bengkel}`
+                                            })
+                                        })
+                                        .catch((err) => {
+                                            console.log(err)
+                                            res.status(500).json({
+                                                status: 500,
+                                                message: err
+                                            })
+                                        })
+                                }
+                            })
+                        }
+                    }).catch((err => {
+                        console.log(err)
+                        res.status(500).json({
                             status: 500,
                             message: err
                         })
-                    } else {
-                        let generatedToken = uuid();
-                        const bengkel = new Bengkel({
-                            _id: mongoose.Types.ObjectId(),
-                            image_url: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/bengkel.png?alt=media&token=${generatedToken}`,
-                            nama_bengkel: req.body.nama_bengkel,
-                            nama_pemilik: req.body.nama_pemilik,
-                            email: req.body.email,
-                            nomor_telp: req.body.nomor_telp,
-                            alamat: req.body.alamat,
-                            password: hash,
-                            latitude: req.body.latitude,
-                            longitude: req.body.longitude,
-                        });
-                        bengkel
-                            .save()
-                            .then(result => {
-                                res.status(200).json({
-                                    status: 200,
-                                    message: `Berhasil mendaftar bengkel ${req.body.nama_bengkel}`
-                                })
-                            })
-                            .catch((err) => {
-                                console.log(err)
-                                res.status(500).json({
-                                    status: 500,
-                                    message: err
-                                })
-                            })
-                    }
-                })
+                    }))
             }
         })
 });
