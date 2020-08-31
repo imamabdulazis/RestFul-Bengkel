@@ -26,32 +26,40 @@ smtpTransport = nodemailer.createTransport(smtpTransport({
 }));
 
 router.post('/send', (req, res) => {
-    readHTMLFile(__dirname + '/public/email.html', function (err, html) {
-        var template = handlebars.compile(html);
-        var replacements = {
-            username: "John Doe"
-        };
-        var htmlToSend = template(replacements);
-        var mailOptions = {
-            from: 'ariyae31@email.com',
-            to: 'devopsimun@gmail.com',
-            subject: 'Pendaftaran BengkelTA',
-            html: htmlToSend
-        };
-        smtpTransport.sendMail(mailOptions, function (error, response) {
-            if (error) {
-                return res.status(500).json({
-                    status: 500,
-                    message: error
-                })
-            } else {
-                return res.status(200).json({
-                    status: 200,
-                    message: response.response
-                })
-            }
+    if (req.body.email) {
+        readHTMLFile(__dirname + '/public/email.html', function (err, html) {
+            var template = handlebars.compile(html);
+            var replacements = {
+                username: "John Doe"
+            };
+            var htmlToSend = template(replacements);
+            var mailOptions = {
+                from: 'ariyae31@email.com',
+                to: req.body.email,
+                subject: 'Pendaftaran BengkelTA',
+                html: htmlToSend
+            };
+            smtpTransport.sendMail(mailOptions, function (error, response) {
+                if (error) {
+                    return res.status(500).json({
+                        status: 500,
+                        message: error
+                    })
+                } else {
+                    return res.status(200).json({
+                        status: 200,
+                        email: req.body.email,
+                        message: response.response
+                    })
+                }
+            });
         });
-    });
+    } else {
+        res.status(500).json({
+            status: 200,
+            message: "Email belum ada!"
+        })
+    }
 });
 
 module.exports = router;
