@@ -57,6 +57,8 @@ const report = require('./api/routes/report');
 
 const antrian = require('./api/routes/antrian');
 
+const email = require('./email');
+
 
 app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
@@ -100,6 +102,9 @@ app.use('/report', report);
 
 // antrian
 app.use('/antrian', antrian);
+
+// email
+app.use('/email', email);
 
 
 app.use((req, res, next) => {
