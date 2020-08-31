@@ -103,9 +103,10 @@ app.use('/antrian', antrian);
 
 
 app.use((req, res, next) => {
-    const error = new Error("Tidak Ditemukan");
-    error.status = 404;
-    next(error);
+    res.sendfile(__dirname + '/public/index.html');
+    // const error = new Error("Tidak Ditemukan");
+    // error.status = 404;
+    // next(error);
 })
 
 app.use((error, req, res, next) => {
