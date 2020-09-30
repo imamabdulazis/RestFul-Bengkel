@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 mongoose.connect(
-    'mongodb+srv://devopsimun:jsWvGiP3YBRN3AUa@belajar-mghf7.mongodb.net/Bengkel?retryWrites=true&w=majority', {
+    'mongourl', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
