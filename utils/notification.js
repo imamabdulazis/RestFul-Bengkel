@@ -2,6 +2,8 @@ const express = require('express');
 const admin = require('./admin');
 const router = express.Router();
 
+
+// kirim notifikasi per user
 const options = {
     priority: "high",
     timeToLive: 60 * 60 * 24
